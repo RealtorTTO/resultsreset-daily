@@ -1904,11 +1904,13 @@ document.addEventListener('click', function(e) {
 // ── ON PAGE LOAD — check URL params ──
 (function() {
   var params = new URLSearchParams(window.location.search);
+  // Accept both ?plan=sub and ?sub=1 as subscriber flags
+  var isSub = params.get('plan') === 'sub' || params.get('sub') === '1';
 
   // ?member=1 → New member from Gumroad redirect — go directly to intake
   if (params.get('member') === '1') {
     S.isReturning = false;
-    if (params.get('plan') === 'sub') {
+    if (isSub) {
       S.isSubscriber = true;
       document.getElementById('intakePlanTypeSection').classList.remove('hide');
     }
@@ -1923,7 +1925,7 @@ document.addEventListener('click', function(e) {
     if (params.get('paid') === '1') {
       // Paid via Gumroad redirect — go to Day 2+ check-in
       S.isReturning = true;
-      if (params.get('plan') === 'sub') {
+      if (isSub) {
         S.isSubscriber = true;
         document.getElementById('planTypeSection').classList.remove('hide');
       }
