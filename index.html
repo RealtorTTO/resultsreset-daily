@@ -903,6 +903,17 @@ button{display:none!important}
     <textarea id="fAnythingElse" class="inp" placeholder="Anything at all — the more I know, the better your plan will be..."></textarea>
   </div>
 
+  <div id="intakePlanTypeSection" class="hide">
+  <hr class="section-divider">
+  <div class="section-title">📅 Your Plan Format</div>
+  <div class="field">
+    <label class="label">Would you like a plan for just tomorrow, or a full week?</label>
+    <p class="label-note">As a subscriber, you can choose a daily plan or get a full week (Monday-Saturday) all at once. Max 7 days at a time for accountability.</p>
+    <div class="opt" data-g="intakePlanType" data-v="daily" onclick="pick(this)"><span class="ol">Just tomorrow's plan — one focused day</span></div>
+    <div class="opt" data-g="intakePlanType" data-v="weekly" onclick="pick(this)"><span class="ol">Full week plan — give me all 7 days at once</span></div>
+  </div>
+  </div>
+
   <hr class="section-divider">
   <!-- ═══ TIME BLOCKS ═══ -->
   <div class="section-title">Your Available Time Tomorrow</div>
@@ -939,6 +950,16 @@ button{display:none!important}
   <div class="reminder-card">
     <p><span class="hl">75 real estate conversations = 1 warm lead.</span> A conversation is a TWO-WAY exchange — they responded, and real estate came up. Leaving a voicemail doesn't count.</p>
     <p style="margin-top:8px">Post in the accountability group — even if it's just a cheer for someone else. We rise together.</p>
+  </div>
+
+  <!-- Agent info for check-in -->
+  <div class="field">
+    <label class="label">Your Name</label>
+    <input type="text" id="d2_name" class="inp" placeholder="What should Teresa call you?">
+  </div>
+  <div class="field">
+    <label class="label">Your Email</label>
+    <input type="email" id="d2_email" class="inp" placeholder="your@email.com">
   </div>
 
   <!-- Step progress -->
@@ -1202,6 +1223,17 @@ button{display:none!important}
     <p>Every honest answer you just gave me is the foundation of your next plan. I read every word — not to grade you, but to meet you exactly where you are and move you forward from there. No wrong answers. No judgment. Just you, your truth, and a plan built around both. Let's go.</p>
   </div>
 
+  <div id="planTypeSection" class="hide">
+  <hr class="section-divider">
+  <div class="section-title">📅 Your Plan Format</div>
+  <div class="field">
+    <label class="label">Would you like a plan for just tomorrow, or a full week?</label>
+    <p class="label-note">Weekly plans cover Monday through Saturday (max 7 days). Daily plans focus on tomorrow only.</p>
+    <div class="opt" data-g="d2_planType" data-v="daily" onclick="pick(this)"><span class="ol">Just tomorrow's plan — one focused day</span></div>
+    <div class="opt" data-g="d2_planType" data-v="weekly" onclick="pick(this)"><span class="ol">Full week plan — give me all 7 days at once</span></div>
+  </div>
+  </div>
+
   <hr class="section-divider">
   <!-- ═══ TIME BLOCKS ═══ -->
   <div class="section-title">Your Available Time Tomorrow</div>
@@ -1266,7 +1298,7 @@ button{display:none!important}
 
 <script>
 // ── STATE ──
-var S = { plan: null, done: {}, streak: 0, selectedPlan: 'monthly', isReturning: false };
+var S = { plan: null, done: {}, streak: 0, selectedPlan: 'monthly', isReturning: false, isSubscriber: false };
 // Store scale values
 var scaleValues = {};
 
@@ -1541,6 +1573,8 @@ function buildPlan(answers, isCheckin) {
     // Day 2+ check-in
     payload = {
       isCheckin: true,
+      planType: a.planType || 'daily',
+      isSubscriber: S.isSubscriber,
       agentInfo: { name: nm, email: a.em || '' },
       checkinData: a
     };
@@ -1548,6 +1582,8 @@ function buildPlan(answers, isCheckin) {
     // Day 1 intake
     payload = {
       isCheckin: false,
+      planType: gv('intakePlanType') || 'daily',
+      isSubscriber: S.isSubscriber,
       agentInfo: {
         name: nm,
         email: a.em,
@@ -1618,8 +1654,31 @@ function buildPlan(answers, isCheckin) {
 }
 
 // ── RENDER PLAN ──
+var planCats = {
+  mindset: { bg: '#1a1a2e', bd: '#4a3f8a', l: 'MINDSET', e: '✨' },
+  power_block: { bg: '#2e1a1a', bd: '#8a3f3f', l: 'POWER BLOCK', e: '⚡' },
+  skill: { bg: '#1a2e2e', bd: '#3f8a7a', l: 'SKILL BUILD', e: '📚' },
+  learn: { bg: '#2e2a1a', bd: '#c49a2a', l: 'YOUR LESSON', e: '🎓' },
+  admin: { bg: '#2e2e1a', bd: '#8a7a3f', l: 'ADMIN', e: '📋' },
+  marketing: { bg: '#2e1a2e', bd: '#7a3f8a', l: 'MARKETING', e: '📱' },
+  current_business: { bg: '#1a2e1a', bd: '#3f8a3f', l: 'CURRENT BIZ', e: '💼' },
+  rest: { bg: '#1e1e1e', bd: '#555', l: 'RECHARGE', e: '☕' }
+};
+
+function renderTaskHtml(t, idx) {
+  var c = planCats[t.category] || planCats.admin;
+  return '<div class="task" id="t' + idx + '"><div class="task-main" style="background:' + c.bg + ';border:1px solid ' + c.bd + '" onclick="togExp(' + idx + ')"><div class="task-chk" onclick="event.stopPropagation();togDone(' + idx + ')"></div><div style="flex:1"><div class="task-meta"><span class="task-time">' + t.time + ' · ' + t.duration + '</span><span class="task-cat" style="color:' + c.bd + '">' + c.e + ' ' + c.l + '</span></div><p class="task-title">' + t.title + '</p>' + (t.motivation ? '<p class="task-mot">' + t.motivation + '</p>' : '') + '</div></div><div class="task-exp" style="border-color:' + c.bd + '"><p class="task-det">' + t.details + '</p>' + (t.script && t.script !== 'null' ? '<div class="task-scr"><p class="st">📋 Copy-Paste Script</p><pre>' + t.script + '</pre></div>' : '') + (t.motivation ? '<p class="task-emot">💛 ' + t.motivation + '</p>' : '') + '</div></div>';
+}
+
 function render(nm) {
   var p = S.plan;
+
+  // Check if this is a weekly plan
+  if (p.days && Array.isArray(p.days)) {
+    renderWeekly(nm, p);
+    return;
+  }
+
   document.getElementById('pDay').textContent = S.streak > 1 ? 'Day ' + S.streak + ' of Your Reset' : 'Day 1 — Let\'s Go';
   document.getElementById('pGreetTitle').textContent = 'Good morning' + (nm && nm !== 'Agent' ? ', ' + nm : '') + '. Your day is ready.';
   document.getElementById('pGreetText').textContent = p.greeting || '';
@@ -1629,50 +1688,87 @@ function render(nm) {
   if (p.identityStatement) { document.getElementById('pIdentity').textContent = p.identityStatement; document.getElementById('pIdentityWrap').classList.remove('hide'); } else { document.getElementById('pIdentityWrap').classList.add('hide'); }
   if (p.selfDoubtRebuttal) { document.getElementById('pRebuttal').textContent = p.selfDoubtRebuttal; document.getElementById('pRebuttalWrap').classList.remove('hide'); } else { document.getElementById('pRebuttalWrap').classList.add('hide'); }
 
-  var cats = {
-    mindset: { bg: '#1a1a2e', bd: '#4a3f8a', l: 'MINDSET', e: '✨' },
-    power_block: { bg: '#2e1a1a', bd: '#8a3f3f', l: 'POWER BLOCK', e: '⚡' },
-    skill: { bg: '#1a2e2e', bd: '#3f8a7a', l: 'SKILL BUILD', e: '📚' },
-    learn: { bg: '#2e2a1a', bd: '#c49a2a', l: 'YOUR LESSON', e: '🎓' },
-    admin: { bg: '#2e2e1a', bd: '#8a7a3f', l: 'ADMIN', e: '📋' },
-    marketing: { bg: '#2e1a2e', bd: '#7a3f8a', l: 'MARKETING', e: '📱' },
-    current_business: { bg: '#1a2e1a', bd: '#3f8a3f', l: 'CURRENT BIZ', e: '💼' },
-    rest: { bg: '#1e1e1e', bd: '#555', l: 'RECHARGE', e: '☕' }
-  };
-
   var h = '';
   (p.schedule || []).forEach(function(t, i) {
-    var c = cats[t.category] || cats.admin;
-    h += '<div class="task" id="t' + i + '"><div class="task-main" style="background:' + c.bg + ';border:1px solid ' + c.bd + '" onclick="togExp(' + i + ')"><div class="task-chk" onclick="event.stopPropagation();togDone(' + i + ')"></div><div style="flex:1"><div class="task-meta"><span class="task-time">' + t.time + ' · ' + t.duration + '</span><span class="task-cat" style="color:' + c.bd + '">' + c.e + ' ' + c.l + '</span></div><p class="task-title">' + t.title + '</p>' + (t.motivation ? '<p class="task-mot">' + t.motivation + '</p>' : '') + '</div></div><div class="task-exp" style="border-color:' + c.bd + '"><p class="task-det">' + t.details + '</p>' + (t.script && t.script !== 'null' ? '<div class="task-scr"><p class="st">📋 Copy-Paste Script</p><pre>' + t.script + '</pre></div>' : '') + (t.motivation ? '<p class="task-emot">💛 ' + t.motivation + '</p>' : '') + '</div></div>';
+    h += renderTaskHtml(t, i);
   });
   document.getElementById('pTasks').innerHTML = h;
+  S.plan._totalTasks = (p.schedule || []).length;
+  updProg();
+}
+
+function renderWeekly(nm, p) {
+  document.getElementById('pDay').textContent = 'Your Week Plan';
+  document.getElementById('pGreetTitle').textContent = 'Good morning' + (nm && nm !== 'Agent' ? ', ' + nm : '') + '. Your whole week is ready.';
+  document.getElementById('pGreetText').textContent = p.greeting || '';
+  document.getElementById('pMirror').textContent = p.mirrorMoment || '';
+  document.getElementById('pEvening').textContent = p.eveningReflection || '';
+  document.getElementById('pTomorrow').textContent = '';
+  if (p.identityStatement) { document.getElementById('pIdentity').textContent = p.identityStatement; document.getElementById('pIdentityWrap').classList.remove('hide'); } else { document.getElementById('pIdentityWrap').classList.add('hide'); }
+  if (p.selfDoubtRebuttal) { document.getElementById('pRebuttal').textContent = p.selfDoubtRebuttal; document.getElementById('pRebuttalWrap').classList.remove('hide'); } else { document.getElementById('pRebuttalWrap').classList.add('hide'); }
+
+  var h = '';
+  if (p.weeklyOverview) {
+    h += '<div style="background:var(--dk);border:1px solid var(--gd);padding:16px 20px;margin-bottom:24px"><p style="color:var(--gd);font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:8px">📅 This Week at a Glance</p><p style="font-size:14px;color:var(--tx);line-height:1.6">' + p.weeklyOverview + '</p></div>';
+  }
+
+  var taskIdx = 0;
+  p.days.forEach(function(day) {
+    h += '<div style="margin-top:28px;margin-bottom:12px;padding:12px 16px;background:var(--dk);border-left:3px solid var(--gd)">';
+    h += '<div style="color:var(--gd);font-size:12px;letter-spacing:2px;text-transform:uppercase;font-weight:700">' + day.dayLabel + '</div>';
+    if (day.dayTheme) h += '<div style="color:var(--wh);font-size:16px;font-weight:600;margin-top:4px">' + day.dayTheme + '</div>';
+    h += '</div>';
+
+    (day.schedule || []).forEach(function(t) {
+      h += renderTaskHtml(t, taskIdx);
+      taskIdx++;
+    });
+  });
+
+  document.getElementById('pTasks').innerHTML = h;
+  S.plan._totalTasks = taskIdx;
   updProg();
 }
 
 function togDone(i) { S.done[i] = !S.done[i]; var e = document.getElementById('t' + i); if (S.done[i]) e.classList.add('done'); else e.classList.remove('done'); updProg(); }
 function togExp(i) { document.getElementById('t' + i).classList.toggle('open'); }
-function updProg() { var tot = S.plan && S.plan.schedule ? S.plan.schedule.length : 0; var dn = 0; for (var k in S.done) if (S.done[k]) dn++; var pct = tot > 0 ? (dn / tot) * 100 : 0; document.getElementById('pProgCount').textContent = dn + '/' + tot + ' tasks'; document.getElementById('pProgFill').style.width = pct + '%'; if (pct >= 100) document.getElementById('pProgDone').classList.remove('hide'); else document.getElementById('pProgDone').classList.add('hide'); }
+function updProg() { var tot = (S.plan && S.plan._totalTasks) ? S.plan._totalTasks : (S.plan && S.plan.schedule ? S.plan.schedule.length : 0); var dn = 0; for (var k in S.done) if (S.done[k]) dn++; var pct = tot > 0 ? (dn / tot) * 100 : 0; document.getElementById('pProgCount').textContent = dn + '/' + tot + ' tasks'; document.getElementById('pProgFill').style.width = pct + '%'; if (pct >= 100) document.getElementById('pProgDone').classList.remove('hide'); else document.getElementById('pProgDone').classList.add('hide'); }
+
+function emailTaskBlock(t) {
+  var s = '\n⏰ ' + t.time + ' (' + t.duration + ')\n';
+  s += '   ' + t.title.toUpperCase() + '\n';
+  s += '   ' + t.details + '\n';
+  if (t.script && t.script !== 'null') s += '\n   📋 SCRIPT:\n   ' + t.script.replace(/\n/g, '\n   ') + '\n';
+  if (t.motivation) s += '\n   💛 ' + t.motivation + '\n';
+  return s;
+}
 
 function emailPlan() {
   if (!S.plan) return;
   var p = S.plan;
-  var body = 'YOUR RESULTS RESET™ DAILY PLAN\n';
+  var isWeekly = p.days && Array.isArray(p.days);
+  var body = isWeekly ? 'YOUR RESULTS RESET™ WEEKLY PLAN\n' : 'YOUR RESULTS RESET™ DAILY PLAN\n';
   body += 'Created by Teresa Overcash · Top 1% Producer · NCREC Instructor\n';
   body += '══════════════════════════════\n\n';
-  body += 'MIRROR MOMENT:\n' + p.mirrorMoment + '\n\n';
-  body += 'YOUR SCHEDULE:\n──────────────\n';
-  (p.schedule || []).forEach(function(t) {
-    body += '\n⏰ ' + t.time + ' (' + t.duration + ')\n';
-    body += '   ' + t.title.toUpperCase() + '\n';
-    body += '   ' + t.details + '\n';
-    if (t.script && t.script !== 'null') body += '\n   📋 SCRIPT:\n   ' + t.script.replace(/\n/g, '\n   ') + '\n';
-    if (t.motivation) body += '\n   💛 ' + t.motivation + '\n';
-  });
+  body += 'MIRROR MOMENT:\n' + (p.mirrorMoment || '') + '\n\n';
+
+  if (isWeekly) {
+    if (p.weeklyOverview) body += 'WEEKLY OVERVIEW:\n' + p.weeklyOverview + '\n\n';
+    p.days.forEach(function(day) {
+      body += '━━━ ' + day.dayLabel.toUpperCase() + (day.dayTheme ? ' — ' + day.dayTheme : '') + ' ━━━\n';
+      (day.schedule || []).forEach(function(t) { body += emailTaskBlock(t); });
+      body += '\n';
+    });
+  } else {
+    body += 'YOUR SCHEDULE:\n──────────────\n';
+    (p.schedule || []).forEach(function(t) { body += emailTaskBlock(t); });
+  }
+
   body += '\n══════════════════════════════\n';
-  body += 'EVENING REFLECTION:\n' + p.eveningReflection + '\n\n';
-  body += 'TOMORROW PREP:\n' + p.tomorrowPrep + '\n\n';
+  body += 'EVENING REFLECTION:\n' + (p.eveningReflection || '') + '\n\n';
+  if (!isWeekly && p.tomorrowPrep) body += 'TOMORROW PREP:\n' + p.tomorrowPrep + '\n\n';
   body += '──────────────\nResults Reset™ Daily · resultsresetdaily.netlify.app\n';
-  var subject = 'My Results Reset™ Daily Plan';
+  var subject = isWeekly ? 'My Results Reset™ Weekly Plan' : 'My Results Reset™ Daily Plan';
   window.location.href = 'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
 }
 
@@ -1712,6 +1808,9 @@ function getCheckinSlots() {
 // ── CHECKIN: GATHER ALL ANSWERS ──
 function gatherCheckinAnswers() {
   return {
+    nm: document.getElementById('d2_name').value || 'Agent',
+    em: document.getElementById('d2_email').value || '',
+    planType: gv('d2_planType') || 'daily',
     convoNew: document.getElementById('d2_convoNew').value || '0',
     convoSOI: document.getElementById('d2_convoSOI').value || '0',
     convoTotal: document.getElementById('d2_convoTotal').value || '0',
@@ -1753,8 +1852,6 @@ function gatherCheckinAnswers() {
 // ── CHECKIN: SUBMIT ──
 function submitCheckin() {
   var a = gatherCheckinAnswers();
-  a.em = a.em || '';
-  a.nm = a.nm || 'Agent';
 
   // Submit to Netlify
   var body = new URLSearchParams();
@@ -1811,6 +1908,10 @@ document.addEventListener('click', function(e) {
   // ?member=1 → New member from Gumroad redirect — go directly to intake
   if (params.get('member') === '1') {
     S.isReturning = false;
+    if (params.get('plan') === 'sub') {
+      S.isSubscriber = true;
+      document.getElementById('intakePlanTypeSection').classList.remove('hide');
+    }
     document.getElementById('intakeWelcome').textContent = '🎉 You\'re in! Payment confirmed. Let\'s build your first plan.';
     showScreen('intakeScreen');
     showConfetti();
@@ -1822,6 +1923,10 @@ document.addEventListener('click', function(e) {
     if (params.get('paid') === '1') {
       // Paid via Gumroad redirect — go to Day 2+ check-in
       S.isReturning = true;
+      if (params.get('plan') === 'sub') {
+        S.isSubscriber = true;
+        document.getElementById('planTypeSection').classList.remove('hide');
+      }
       showScreen('checkinScreen');
       return;
     }

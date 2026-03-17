@@ -32,7 +32,8 @@ GMAIL_ADDRESS = os.environ.get("GMAIL_ADDRESS", "teresaovercash@gmail.com")
 GMAIL_APP_PASSWORD = os.environ.get("GMAIL_APP_PASSWORD", "")
 TERESA_EMAIL = os.environ.get("TERESA_NOTIFY_EMAIL", "teresatedder@gmail.com")
 MODEL = "claude-sonnet-4-20250514"
-MAX_TOKENS = 8000
+MAX_TOKENS_DAILY = 8000
+MAX_TOKENS_WEEKLY = 16000
 PORT = int(os.environ.get("PORT", 8000))
 
 app = FastAPI()
@@ -47,8 +48,16 @@ client = Anthropic(api_key=ANTHROPIC_API_KEY)
 
 def format_intake_message(data: dict) -> str:
     agent_info = data.get("agentInfo", {})
-    parts = ["GENERATE A PERSONALIZED DAILY COACHING PLAN FOR THIS AGENT.\n"]
+    plan_type = data.get("planType", "daily")
+    is_subscriber = data.get("isSubscriber", False)
+
+    if plan_type == "weekly":
+        parts = ["GENERATE A PERSONALIZED WEEKLY COACHING PLAN (6 DAYS, MONDAY-SATURDAY) FOR THIS AGENT.\n"]
+    else:
+        parts = ["GENERATE A PERSONALIZED DAILY COACHING PLAN FOR THIS AGENT.\n"]
     parts.append("THIS IS A DAY 1 / FIRST-TIME PLAN — use the intake form answers below.\n")
+    if plan_type == "weekly" and is_subscriber:
+        parts.append("IMPORTANT: This agent is a SUBSCRIBER and wants a FULL WEEK plan.\n")
     parts.append("=" * 60)
     parts.append("\n## AGENT INTAKE FORM ANSWERS\n")
     
@@ -83,7 +92,55 @@ def format_intake_message(data: dict) -> str:
     
     parts.append("\n" + "=" * 60)
     parts.append("\nIMPORTANT: Return your response as a valid JSON object with this exact structure:")
-    parts.append("""
+
+    if plan_type == "weekly":
+        parts.append("""
+{
+  "greeting": "Your personalized Momentum Message opening — 3-5 sentences in Teresa's voice",
+  "mirrorMoment": "The Mirror Moment for the week",
+  "weeklyOverview": "Brief overview of the week's focus and theme",
+  "days": [
+    {
+      "dayLabel": "Monday",
+      "dayTheme": "Short theme name for the day",
+      "schedule": [
+        {
+          "time": "HH:MM AM/PM",
+          "duration": "XX min",
+          "category": "mindset|power_block|skill|learn|admin|marketing|current_business|rest",
+          "title": "Short descriptive task title",
+          "details": "Detailed step-by-step instructions for this task",
+          "script": "Copy-paste script text if applicable, or null",
+          "motivation": "Teresa's encouraging note for this specific task"
+        }
+      ]
+    }
+  ],
+  "eveningReflection": "End-of-week reflection prompt",
+  "identityStatement": "Weekly I AM identity statement based on their strengths",
+  "selfDoubtRebuttal": "Weekly self-doubt rebuttal using their own words"
+}
+
+RULES FOR WEEKLY PLANS:
+- Generate plans for Monday through Saturday (6 days). Sunday is rest.
+- Use their exact available time slots to build EACH day's schedule
+- Each day should have 8-15 tasks depending on their available hours
+- Fill EVERY available minute with specific, actionable tasks
+- Include at least one Power Block per day (their most important lead gen time)
+- Include copy-paste scripts for conversations, social media, follow-ups
+- Include a mindset/identity task at the start of each day
+- Include a skill-building task relevant to what they said they need
+- Include rest/recharge blocks — you believe in sustainable effort
+- Every task must have specific details — never vague instructions
+- Adapt intensity based on their confidence level, hours, and situation
+- If they said they're broke/urgent, front-load income-producing activities
+- If they're burned out, reduce the plan and give permission to do less
+- Vary the activities across days — don't repeat the same exact tasks
+- Build momentum through the week — start easier, increase intensity
+- Time blocks should match their stated availability for EACH day
+""")
+    else:
+        parts.append("""
 {
   "greeting": "Your personalized Momentum Message opening — 3-5 sentences in Teresa's voice",
   "mirrorMoment": "The Mirror Moment — a reflective prompt based on their answers",
@@ -125,9 +182,16 @@ RULES FOR THE SCHEDULE:
 def format_checkin_message(data: dict) -> str:
     agent_info = data.get("agentInfo", {})
     checkin = data.get("checkinData", agent_info)
-    
-    parts = ["GENERATE A PERSONALIZED DAILY COACHING PLAN FOR THIS RETURNING AGENT.\n"]
+    plan_type = data.get("planType", "daily")
+    is_subscriber = data.get("isSubscriber", False)
+
+    if plan_type == "weekly":
+        parts = ["GENERATE A PERSONALIZED WEEKLY COACHING PLAN (6 DAYS, MONDAY-SATURDAY) FOR THIS RETURNING AGENT.\n"]
+    else:
+        parts = ["GENERATE A PERSONALIZED DAILY COACHING PLAN FOR THIS RETURNING AGENT.\n"]
     parts.append("THIS IS A DAY 2+ PLAN — use the check-in form answers below to adapt their plan.\n")
+    if plan_type == "weekly" and is_subscriber:
+        parts.append("IMPORTANT: This agent is a SUBSCRIBER and wants a FULL WEEK plan.\n")
     parts.append("=" * 60)
     parts.append("\n## CHECK-IN FORM ANSWERS\n")
     
@@ -184,7 +248,58 @@ def format_checkin_message(data: dict) -> str:
     
     parts.append("\n" + "=" * 60)
     parts.append("\nIMPORTANT: Return your response as a valid JSON object with this exact structure:")
-    parts.append("""
+
+    checkin_rules = """
+RULES FOR DAY 2+ PLANS:
+- Reference their check-in answers directly — quote their words back to them
+- If they said the last plan was "too much," simplify this one
+- If they said "too easy," push harder with more tasks and higher targets
+- If they're discouraged/drained, lead with compassion and reduce the load
+- If they're fired up, match their energy with an ambitious plan
+- Double down on what they said is producing traction
+- Address the activity they're avoiding — name it, give them a script for it
+- If they have a specific farm area, include a Business Intelligence section
+- Include skills they specifically asked for help with
+- Their commitment level should calibrate plan intensity (1-5: gentle, 6-8: standard, 9-10: push hard)
+- Use their "win" as fuel — reference it in the greeting
+- Use their "story to stop telling" in the self-doubt rebuttal"""
+
+    if plan_type == "weekly":
+        parts.append("""
+{
+  "greeting": "Your personalized Momentum Message — reference their check-in answers, celebrate wins, address gaps",
+  "mirrorMoment": "The Mirror Moment — use their own words from the gap/thriving questions",
+  "weeklyOverview": "Brief overview of the week's focus and theme",
+  "days": [
+    {
+      "dayLabel": "Monday",
+      "dayTheme": "Short theme name for the day",
+      "schedule": [
+        {
+          "time": "HH:MM AM/PM",
+          "duration": "XX min",
+          "category": "mindset|power_block|skill|learn|admin|marketing|current_business|rest",
+          "title": "Short descriptive task title",
+          "details": "Detailed step-by-step instructions",
+          "script": "Copy-paste script if applicable, or null",
+          "motivation": "Teresa's note for this task"
+        }
+      ]
+    }
+  ],
+  "eveningReflection": "End-of-week reflection prompt",
+  "identityStatement": "A personalized I AM statement that evolves from their check-in",
+  "selfDoubtRebuttal": "Counter the specific story they said they need to stop telling themselves"
+}
+""" + checkin_rules + """
+- Generate plans for Monday through Saturday (6 days). Sunday is rest.
+- Each day should have 8-15 tasks depending on available hours
+- Vary the activities across days — don't repeat the same exact tasks
+- Build momentum through the week — start easier, increase intensity
+- Use their available time slots for EACH day
+""")
+    else:
+        parts.append("""
 {
   "greeting": "Your personalized Momentum Message — reference their check-in answers, celebrate wins, address gaps",
   "mirrorMoment": "The Mirror Moment — use their own words from the gap/thriving questions",
@@ -204,70 +319,77 @@ def format_checkin_message(data: dict) -> str:
     }
   ]
 }
-
-RULES FOR DAY 2+ PLANS:
-- Reference their check-in answers directly — quote their words back to them
-- If they said the last plan was "too much," simplify this one
-- If they said "too easy," push harder with more tasks and higher targets
-- If they're discouraged/drained, lead with compassion and reduce the load
-- If they're fired up, match their energy with an ambitious plan
-- Double down on what they said is producing traction
-- Address the activity they're avoiding — name it, give them a script for it
-- If they have a specific farm area, include a Business Intelligence section
-- Include skills they specifically asked for help with
-- Their commitment level should calibrate plan intensity (1-5: gentle, 6-8: standard, 9-10: push hard)
-- Use their "win" as fuel — reference it in the greeting
-- Use their "story to stop telling" in the self-doubt rebuttal
+""" + checkin_rules + """
 - Include 8-15 tasks depending on available hours
 """)
     return "\n".join(parts)
 
 
+def _format_task_for_email(task: dict, cat_labels: dict) -> list:
+    lines = []
+    cat = cat_labels.get(task.get("category", "admin"), "📋 TASK")
+    lines.append(f"\n⏰ {task.get('time', '')} ({task.get('duration', '')})")
+    lines.append(f"   {cat}: {task.get('title', '')}")
+    lines.append(f"   {task.get('details', '')}")
+    if task.get("script") and task["script"] != "null":
+        lines.append(f"\n   📋 SCRIPT:")
+        for sline in task["script"].split("\n"):
+            lines.append(f"   {sline}")
+    if task.get("motivation"):
+        lines.append(f"\n   💛 {task['motivation']}")
+    return lines
+
+
 def build_plan_text_for_email(plan: dict, agent_name: str) -> str:
+    is_weekly = isinstance(plan.get("days"), list)
     lines = []
     lines.append("═" * 50)
-    lines.append("RESULTS RESET™ DAILY COACHING PLAN")
+    lines.append("RESULTS RESET™ WEEKLY COACHING PLAN" if is_weekly else "RESULTS RESET™ DAILY COACHING PLAN")
     lines.append(f"Agent: {agent_name}")
     lines.append(f"Generated: {datetime.now().strftime('%B %d, %Y at %I:%M %p')}")
     lines.append("═" * 50)
     lines.append("")
-    
+
     if plan.get("greeting"):
         lines.extend(["💛 MOMENTUM MESSAGE", "─" * 30, plan["greeting"], ""])
     if plan.get("identityStatement"):
         lines.extend(["🪞 IDENTITY STATEMENT", "─" * 30, plan["identityStatement"], ""])
     if plan.get("selfDoubtRebuttal"):
         lines.extend(["💪 SELF-DOUBT REBUTTAL", "─" * 30, plan["selfDoubtRebuttal"], ""])
-    
+
     cat_labels = {
         "mindset": "✨ MINDSET", "power_block": "⚡ POWER BLOCK",
         "skill": "📚 SKILL BUILD", "learn": "🎓 YOUR LESSON",
         "admin": "📋 ADMIN", "marketing": "📱 MARKETING",
         "current_business": "💼 CURRENT BIZ", "rest": "☕ RECHARGE",
     }
-    
-    if plan.get("schedule"):
+
+    if is_weekly:
+        if plan.get("weeklyOverview"):
+            lines.extend(["📅 WEEKLY OVERVIEW", "─" * 30, plan["weeklyOverview"], ""])
+        for day in plan["days"]:
+            day_label = day.get("dayLabel", "Day")
+            day_theme = day.get("dayTheme", "")
+            lines.append("")
+            lines.append("━" * 40)
+            lines.append(f"📅 {day_label.upper()}" + (f" — {day_theme}" if day_theme else ""))
+            lines.append("━" * 40)
+            for task in day.get("schedule", []):
+                lines.extend(_format_task_for_email(task, cat_labels))
+            lines.append("")
+    elif plan.get("schedule"):
         lines.extend(["📅 YOUR DAILY SCHEDULE", "─" * 30])
         for task in plan["schedule"]:
-            cat = cat_labels.get(task.get("category", "admin"), "📋 TASK")
-            lines.append(f"\n⏰ {task.get('time', '')} ({task.get('duration', '')})")
-            lines.append(f"   {cat}: {task.get('title', '')}")
-            lines.append(f"   {task.get('details', '')}")
-            if task.get("script") and task["script"] != "null":
-                lines.append(f"\n   📋 SCRIPT:")
-                for sline in task["script"].split("\n"):
-                    lines.append(f"   {sline}")
-            if task.get("motivation"):
-                lines.append(f"\n   💛 {task['motivation']}")
+            lines.extend(_format_task_for_email(task, cat_labels))
         lines.append("")
-    
+
     if plan.get("mirrorMoment"):
         lines.extend(["🪞 MIRROR MOMENT", "─" * 30, plan["mirrorMoment"], ""])
     if plan.get("eveningReflection"):
         lines.extend(["🌙 EVENING REFLECTION", "─" * 30, plan["eveningReflection"], ""])
     if plan.get("tomorrowPrep"):
         lines.extend(["📝 TOMORROW PREP", "─" * 30, plan["tomorrowPrep"], ""])
-    
+
     lines.extend(["═" * 50, "Results Reset™ Daily — resultsresetcoaching.com",
                    "Created by Teresa Overcash · Top 1% Producer · NCREC Instructor"])
     return "\n".join(lines)
@@ -346,14 +468,17 @@ async def generate_plan(request: Request):
         agent_name = agent_info.get("name", "Agent")
         agent_email = agent_info.get("email", "")
         
+        plan_type = data.get("planType", "daily")
+
         if is_checkin:
             user_message = format_checkin_message(data)
         else:
             user_message = format_intake_message(data)
-        
+
+        max_tokens = MAX_TOKENS_WEEKLY if plan_type == "weekly" else MAX_TOKENS_DAILY
         message = client.messages.create(
             model=MODEL,
-            max_tokens=MAX_TOKENS,
+            max_tokens=max_tokens,
             system=SYSTEM_PROMPT,
             messages=[{"role": "user", "content": user_message}],
         )
