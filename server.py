@@ -375,7 +375,8 @@ async def generate_plan(request: Request):
         if agent_name and agent_email:
             plan_email_text = build_plan_text_for_email(plan, agent_name)
             asyncio.create_task(send_plan_to_teresa(agent_name, agent_email, plan_email_text, is_checkin))
-            asyncio.create_task(schedule_followup(agent_name, agent_email))
+            # Follow-up removed — Teresa follows up personally
+            # asyncio.create_task(schedule_followup(agent_name, agent_email))
         
         return JSONResponse(content={"content": [{"text": json.dumps(plan)}]})
     

@@ -272,6 +272,71 @@ button{display:none!important}
 .reminder-card .hl{color:var(--gd);font-weight:600}
 .closing-card{background:var(--dk);border:1px solid var(--bd);padding:20px;margin:24px 0;text-align:center}
 .closing-card p{font-size:14px;line-height:1.7;color:var(--tx);font-style:italic}
+
+/* ── SALES PAGE REDESIGN ── */
+.sales-wrap{max-width:680px;margin:0 auto;padding:0 16px 60px}
+.s-pill{display:inline-block;color:var(--gd);font-size:11px;letter-spacing:3px;text-transform:uppercase;font-weight:600;border:1px solid rgba(196,154,42,.3);padding:6px 18px;margin-bottom:20px}
+.s-hero{text-align:center;padding:40px 0 32px}
+.s-hero h1{font-family:'Cormorant Garamond',Georgia,serif;font-size:42px;font-weight:700;color:var(--wh);line-height:1.15;margin-bottom:16px}
+.s-hero h1 em{color:var(--gd);font-style:italic;font-weight:400}
+.s-hero p{font-size:16px;line-height:1.7;color:var(--tx);max-width:600px;margin:0 auto}
+@media(max-width:500px){.s-hero h1{font-size:32px}}
+
+.s-stats{display:flex;gap:24px;justify-content:center;padding:32px 0;border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);margin:0 0 40px}
+.s-stat{text-align:center;flex:1}
+.s-stat-num{font-family:'Cormorant Garamond',Georgia,serif;font-size:48px;font-weight:700;color:var(--gd);line-height:1}
+.s-stat-desc{color:var(--tx);font-size:13px;margin-top:6px;line-height:1.4}
+@media(max-width:500px){.s-stats{flex-direction:column;gap:20px}.s-stat-num{font-size:40px}}
+
+.s-section-label{color:var(--gd);font-size:11px;letter-spacing:3px;text-transform:uppercase;font-weight:700;text-align:center;margin-bottom:8px}
+.s-section-title{font-family:'Cormorant Garamond',Georgia,serif;font-size:30px;font-weight:700;color:var(--wh);text-align:center;margin-bottom:28px;line-height:1.2}
+
+.s-feature{background:var(--dk);border:1px solid var(--bd);padding:22px 24px;margin-bottom:10px}
+.s-feature-icon{font-size:24px;margin-bottom:8px}
+.s-feature-title{font-size:16px;font-weight:600;color:var(--wh);margin-bottom:6px}
+.s-feature-desc{font-size:14px;color:var(--tx);line-height:1.6}
+
+.s-compare{background:var(--dk);border:1px solid var(--bd);padding:28px 24px;margin:40px 0}
+.s-compare-title{font-family:'Cormorant Garamond',Georgia,serif;font-size:26px;font-weight:700;color:var(--wh);text-align:center;margin-bottom:24px}
+.s-compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.s-compare-cell{padding:16px;background:var(--cd);border:1px solid var(--bd)}
+.s-compare-cell-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:8px}
+.s-compare-cell-label.other{color:var(--mt)}
+.s-compare-cell-label.ours{color:var(--gd)}
+.s-compare-cell p{font-size:13px;line-height:1.6;color:var(--tx)}
+@media(max-width:500px){.s-compare-grid{grid-template-columns:1fr}}
+
+.s-quote{border-left:3px solid var(--gd);padding:20px 24px;margin:40px 0}
+.s-quote p{font-family:'Cormorant Garamond',Georgia,serif;font-size:20px;font-style:italic;color:var(--tx);line-height:1.6;margin-bottom:12px}
+.s-quote-attr{font-size:14px;color:var(--wh);font-weight:600}
+.s-quote-sub{font-size:12px;color:var(--mt);margin-top:2px}
+
+.s-pricing{margin:40px 0 0}
+.s-pricing-sub{text-align:center;color:var(--tx);font-size:15px;margin-bottom:24px;line-height:1.5}
+
+.s-price-card{padding:18px 20px;margin-bottom:10px;background:var(--cd);border:1px solid var(--bd);cursor:pointer;display:flex;align-items:center;gap:14px;transition:border-color .2s}
+.s-price-card.sel{background:#1a1a10;border-color:var(--gd)}
+.s-price-card.pop{border:2px solid rgba(196,154,42,.35);position:relative}
+.s-price-card.pop.sel{border-color:var(--gd)}
+.s-price-radio{width:20px;height:20px;border:2px solid var(--bd);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+.s-price-card.sel .s-price-radio{border-color:var(--gd);background:var(--gd)}
+.s-price-card.sel .s-price-radio::after{content:'';width:8px;height:8px;border-radius:50%;background:var(--bk)}
+.s-price-info{flex:1}
+.s-price-name{font-size:16px;font-weight:600;color:var(--tx)}
+.s-price-card.sel .s-price-name{color:var(--wh)}
+.s-price-detail{font-size:13px;color:var(--mt);margin-top:2px;line-height:1.4}
+.s-price-right{text-align:right;flex-shrink:0}
+.s-price-amount{font-family:'Cormorant Garamond',Georgia,serif;font-size:28px;font-weight:700;color:var(--gd)}
+.s-price-unit{font-size:12px;color:var(--mt)}
+.s-pop-tag{position:absolute;top:-10px;left:20px;background:var(--gd);color:var(--bk);font-size:10px;font-weight:700;letter-spacing:1.5px;padding:2px 10px;text-transform:uppercase}
+
+.s-cta{width:100%;padding:20px;background:linear-gradient(135deg,var(--gd),#a07d1c);color:var(--bk);font-size:17px;font-weight:700;letter-spacing:2px;text-transform:uppercase;border:none;cursor:pointer;transition:transform .2s,box-shadow .2s;margin-top:20px}
+.s-cta:hover{transform:translateY(-1px);box-shadow:0 8px 32px rgba(196,154,42,.25)}
+
+.s-footer{text-align:center;margin-top:40px;padding:20px 0;border-top:1px solid var(--bd)}
+.s-footer .a{color:var(--gd);font-size:14px;font-weight:600;letter-spacing:1px}
+.s-footer .b{color:var(--mt);font-size:12px;margin-top:4px}
+.s-footer .c{color:#444;font-size:11px;margin-top:4px}
 </style>
 </head>
 <body>
@@ -291,73 +356,137 @@ button{display:none!important}
 <!-- SCREEN 1: SALES / LANDING PAGE                  -->
 <!-- ════════════════════════════════════════════════ -->
 <div id="salesScreen" class="screen active">
-<div class="wrap">
+<div class="sales-wrap">
 
-<!-- CHANGE 1: Returning member strip REMOVED — was confusing new visitors -->
-
-<div class="hero">
-  <p class="hero-tag">Results Reset™ Daily</p>
-  <h1>Tell me your time.<br>I'll tell you <em>exactly what to do.</em></h1>
-  <p>Put in your available hours for tomorrow. When you wake up, your entire day will be waiting — every minute planned, every script ready, every task laid out in the exact order you should do them.</p>
-  <p class="sm">No more lying in bed wondering what to work on. Just open the app and start with Task 1.</p>
+<!-- HERO -->
+<div class="s-hero">
+  <div class="s-pill">From a 30-Year Top Producer</div>
+  <h1>Stop Waking Up Wondering<br><em>What to Do</em></h1>
+  <p>Get a personalized daily plan with exact scripts, time blocks, and coaching — built for your personality, your schedule, and where you actually are in your business. Not a generic template. Not another AI chatbot. Real coaching methodology from someone who still sells.</p>
 </div>
 
-<div class="diff-box"><div class="tag">Why This Is Different</div>
-  <p>This is <strong>not</strong> a plan you can generate anywhere else. Any AI can give you a task list. Only this system is built on <span class="hl">tried, tested, and proven agent plans</span> created by Teresa Overcash — a top 1% producer who has personally coached hundreds of agents all across North Carolina with nearly 30 years of experience.</p>
-  <p>Every script has been used on real calls. Every daily structure tested in real brokerages. Every Mirror Moment born from a real coaching conversation with a real agent who was ready to quit — and didn't. Teresa doesn't just know this material — she actively teaches it as an NCREC Licensed Instructor, produces with it as a top 1% agent, and coaches it daily.</p>
-  <p class="it">The AI enhances the process. The experience and voice of the coach does the talking. No other AI coaching tool has both.</p>
+<!-- STATS -->
+<div class="s-stats">
+  <div class="s-stat">
+    <div class="s-stat-num">367%</div>
+    <div class="s-stat-desc">Increase in agent leads for coaches who follow the plan</div>
+  </div>
+  <div class="s-stat">
+    <div class="s-stat-num">30 yrs</div>
+    <div class="s-stat-desc">Of active production (not retired, not theory — still selling)</div>
+  </div>
+  <div class="s-stat">
+    <div class="s-stat-num">265+</div>
+    <div class="s-stat-desc">Agents coached across 8 offices in North Carolina</div>
+  </div>
 </div>
 
-<!-- Social Proof -->
-<div class="proof">
-  <div class="proof-stat">367%</div>
-  <div class="proof-label">Documented increase in agent leads</div>
-  <div class="proof-sub">Results Reset™ coaching program — verified across hundreds of agents</div>
-</div>
-<div class="proof-quotes">
-  <div class="proof-quote"><p>"I went from zero conversations to 15 a week. I was ready to quit, and now I have buyers under contract."</p><div class="attr">— Results Reset™ agent, Winston-Salem</div></div>
-  <div class="proof-quote"><p>"The Mirror Moment changed everything for me. I stopped seeing myself as someone playing real estate and started seeing myself as a professional."</p><div class="attr">— Results Reset™ agent, Greensboro</div></div>
-  <div class="proof-quote"><p>"For the first time in two years, I actually know what to do when I sit down at my desk."</p><div class="attr">— Results Reset™ agent, Raleigh</div></div>
-</div>
+<!-- WHAT YOU GET -->
+<div class="s-section-label">What You Get</div>
+<div class="s-section-title">Everything Other 'Coaching' Products Leave Out</div>
 
-<!-- How It Works -->
-<div class="how-works">
-  <div class="how-title">How It Works</div>
-  <div class="how-step"><div class="how-num">1</div><div class="how-text"><strong>Choose your plan</strong> — pick the option that fits you best.</div></div>
-  <div class="how-step"><div class="how-num">2</div><div class="how-text"><strong>Tell us about you</strong> — your experience, your struggle, and what skill you want to build.</div></div>
-  <div class="how-step"><div class="how-num">3</div><div class="how-text"><strong>Set your available time</strong> — toggle on the hours you can work tomorrow. Even 2 hours is enough.</div></div>
-  <div class="how-step"><div class="how-num">4</div><div class="how-text"><strong>Get your plan</strong> — a minute-by-minute coaching schedule with scripts, tasks, and your Mirror Moment identity statement.</div></div>
+<div class="s-feature">
+  <div class="s-feature-icon">🪞</div>
+  <div class="s-feature-title">The Mirror Moment</div>
+  <div class="s-feature-desc">A personalized identity statement that rewires how you see yourself. You'll read it out loud every morning before your first task. Words become beliefs.</div>
 </div>
-
-<!-- PRICING FIRST -->
-<div class="field">
-  <label class="label" style="text-align:center;font-size:15px;margin-bottom:12px">Choose Your Plan</label>
-  <div class="price-opt" data-g="pln" data-v="daily" onclick="pickPlan(this)"><div><div class="price-name">Just Today — $5</div><div class="price-desc">Try it once. No subscription.</div></div><div class="price-amount">$5</div></div>
-  <div class="price-opt pop sel" data-g="pln" data-v="monthly" onclick="pickPlan(this)"><div class="pop-tag">Most Popular</div><div><div class="price-name">Monthly Reset — $29/month</div><div class="price-desc">Daily plans + weekly check-ins + AI coaching. Cancel anytime.</div></div><div class="price-amount">$29<span class="price-unit">/mo</span></div></div>
-  <div class="price-opt" data-g="pln" data-v="annual" onclick="pickPlan(this)"><div><div class="price-name">Annual Reset — $249/year <span class="save">Save $99</span></div><div class="price-desc">Everything in monthly. That's just $20.75/month.</div></div><div class="price-amount">$249<span class="price-unit">/yr</span></div></div>
+<div class="s-feature">
+  <div class="s-feature-icon">🎯</div>
+  <div class="s-feature-title">Time-Blocked Daily Schedule</div>
+  <div class="s-feature-desc">Every minute of your available time filled with specific tasks, exact times, and durations. No guessing, no "figure it out." Just follow the plan.</div>
 </div>
-
-<button class="cta" id="salesBuyBtn" onclick="startPurchase()">GET MY PLAN — $29</button>
-<div class="trust"><span>🔒 Secure payment</span><span>↩️ 30-day guarantee</span><span>🚫 Cancel anytime</span></div>
-
-<!-- FAQ -->
-<div class="faq">
-  <div class="faq-title">Common Questions</div>
-  <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q"><span>What exactly do I get each day?</span><span class="arrow">▼</span></div><div class="faq-a">A complete, minute-by-minute coaching plan for your day — including who to call, what to say (with copy-paste scripts), how to handle objections, a skill-building lesson, and a Mirror Moment identity statement. Every task is laid out in order with exact times.</div></div>
-  <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q"><span>Is this really different from ChatGPT or other AI tools?</span><span class="arrow">▼</span></div><div class="faq-a">Completely. Any AI can give you a generic task list. This system is built on Teresa Overcash's nearly 30 years of active, top-1% production and coaching hundreds of real agents. The scripts have been used on real calls. The structures have been tested in real brokerages. The AI enhances the delivery — but Teresa's proven methodology does the coaching.</div></div>
-  <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q"><span>What if I only have 2 hours to work?</span><span class="arrow">▼</span></div><div class="faq-a">That's enough. Set your available time blocks to whatever you have — even 90 minutes. Your plan will fill every minute of that time with the highest-impact activities for your specific situation. Part-time agents are welcome. The system adapts to you.</div></div>
-  <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q"><span>Can I cancel anytime?</span><span class="arrow">▼</span></div><div class="faq-a">Yes. Cancel with one click through Gumroad — no hoops, no phone calls, no guilt. You also get a 30-day money-back guarantee. If it doesn't help you in the first 30 days, you get a full refund.</div></div>
-  <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q"><span>What's a Mirror Moment?</span><span class="arrow">▼</span></div><div class="faq-a">Teresa's signature coaching technique. Based on what you share about your biggest struggle, the system creates a powerful identity statement — reframing your fear into who you are becoming. You read it out loud each morning before starting your day. It's the piece most agents say changed everything for them.</div></div>
+<div class="s-feature">
+  <div class="s-feature-icon">📋</div>
+  <div class="s-feature-title">Copy-Paste Scripts</div>
+  <div class="s-feature-desc">Word-for-word scripts that sound human, not salesy. Written for YOUR personality type — introvert, extrovert, or somewhere in between.</div>
+</div>
+<div class="s-feature">
+  <div class="s-feature-icon">🎯</div>
+  <div class="s-feature-title">The Power Block</div>
+  <div class="s-feature-desc">45 minutes of focused outreach that builds your business. Phone on DND, no email, no scrolling. This is the engine — and your plan schedules it at your peak energy window.</div>
+</div>
+<div class="s-feature">
+  <div class="s-feature-icon">🌙</div>
+  <div class="s-feature-title">Evening Reflection + Tomorrow Prep</div>
+  <div class="s-feature-desc">Wind down with a coaching note from Teresa, then spend 5 minutes prepping for tomorrow so you wake up ready — not anxious.</div>
 </div>
 
-<div class="promise-box"><h3>Tomorrow morning, you'll wake up to an exact schedule</h3><p>Every minute planned. Every script ready. Every task in order. No decisions to make. Just open the app and start.</p></div>
-<p class="powered">Built on nearly 30 years of production, coaching, and NCREC instruction — enhanced by AI</p>
+<!-- COMPARISON -->
+<div class="s-compare">
+  <div class="s-compare-title">This Isn't Another AI Chatbot</div>
+  <div class="s-compare-grid">
+    <div class="s-compare-cell">
+      <div class="s-compare-cell-label other">Other Products</div>
+      <p>Generic weekly activity targets. No scripts. No personality consideration. Same plan for everyone. Set it and forget it.</p>
+    </div>
+    <div class="s-compare-cell">
+      <div class="s-compare-cell-label ours">Results Reset Daily</div>
+      <p>Daily time-blocked plan with exact scripts. Built for your personality type. From a coach who personally adjusts as you grow.</p>
+    </div>
+    <div class="s-compare-cell">
+      <div class="s-compare-cell-label other">Other Products</div>
+      <p>Built by developers who've never sold a house. Motivation quotes from a database. No real methodology.</p>
+    </div>
+    <div class="s-compare-cell">
+      <div class="s-compare-cell-label ours">Results Reset Daily</div>
+      <p>30 years of real production distilled into every plan. Teresa still sells, still coaches, still answers her phone. This comes from her brain — not a prompt library.</p>
+    </div>
+  </div>
+</div>
 
-<div class="ft" style="margin-top:24px">
+<!-- TERESA QUOTE -->
+<div class="s-quote">
+  <p>"87% of agents leave this industry in 5 years. Not because they lack talent — because nobody gave them a system. I'm not going to let that be your story."</p>
+  <div class="s-quote-attr">Teresa Overcash — Broker-in-Charge, Realty ONE Group Results</div>
+  <div class="s-quote-sub">NCREC Licensed Instructor · CLHMS · Youngest-Ever Regional Realtor of the Year</div>
+</div>
+
+<!-- PRICING -->
+<div class="s-pricing">
+  <div class="s-section-label">Choose Your Plan</div>
+  <div class="s-section-title">Start for $5. Seriously.</div>
+  <div class="s-pricing-sub">Every plan comes with the same depth and personalization. Pick what fits.</div>
+
+  <div class="s-price-card" data-g="pln" data-v="daily" onclick="pickPlan(this)">
+    <div class="s-price-radio"></div>
+    <div class="s-price-info">
+      <div class="s-price-name">Daily Plan</div>
+      <div class="s-price-detail">One fully personalized day plan delivered instantly. Perfect to try it out.</div>
+    </div>
+    <div class="s-price-right">
+      <div class="s-price-amount">$5</div>
+    </div>
+  </div>
+  <div class="s-price-card pop sel" data-g="pln" data-v="monthly" onclick="pickPlan(this)">
+    <div class="s-pop-tag">Most Popular</div>
+    <div class="s-price-radio"></div>
+    <div class="s-price-info">
+      <div class="s-price-name">Monthly</div>
+      <div class="s-price-detail">Fresh daily plan every day. Teresa personally reviews and adjusts your plans as you grow. Cancel anytime.</div>
+    </div>
+    <div class="s-price-right">
+      <div class="s-price-amount">$29<span class="s-price-unit">/mo</span></div>
+    </div>
+  </div>
+  <div class="s-price-card" data-g="pln" data-v="annual" onclick="pickPlan(this)">
+    <div class="s-price-radio"></div>
+    <div class="s-price-info">
+      <div class="s-price-name">Annual</div>
+      <div class="s-price-detail">Best value — save over $100/yr. Full year of daily plans with ongoing coaching adjustments.</div>
+    </div>
+    <div class="s-price-right">
+      <div class="s-price-amount">$249<span class="s-price-unit">/yr</span></div>
+    </div>
+  </div>
+
+  <button class="s-cta" id="salesBuyBtn" onclick="startPurchase()">GET STARTED</button>
+</div>
+
+<!-- FOOTER -->
+<div class="s-footer">
   <p class="a">Results Reset™ Daily</p>
   <p class="b">Created by Teresa Overcash · Top 1% Producer · NCREC Instructor</p>
   <p class="c">Realty ONE Group Results · North Carolina</p>
-  <p style="color:#333;font-size:10px;margin-top:8px"><a href="mailto:teresaovercash@gmail.com" style="color:#444;text-decoration:none">Contact</a> · <a href="https://teresa300.gumroad.com/" style="color:#444;text-decoration:none" target="_blank">Gumroad</a></p>
 </div>
 
 </div>
