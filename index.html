@@ -369,7 +369,7 @@ button{display:none!important}
 <div class="s-stats">
   <div class="s-stat">
     <div class="s-stat-num">367%</div>
-    <div class="s-stat-desc">Increase in agent leads for coaches who follow the plan</div>
+    <div class="s-stat-desc">Increase in agent leads for agents who follow the plan</div>
   </div>
   <div class="s-stat">
     <div class="s-stat-num">30 yrs</div>
@@ -421,7 +421,7 @@ button{display:none!important}
     </div>
     <div class="s-compare-cell">
       <div class="s-compare-cell-label ours">Results Reset Daily</div>
-      <p>Daily time-blocked plan with exact scripts. Built for your personality type. From a coach who personally adjusts as you grow.</p>
+      <p>Daily time-blocked plan with exact scripts. Built for your personality type. Teresa personally follows up with every agent who signs up.</p>
     </div>
     <div class="s-compare-cell">
       <div class="s-compare-cell-label other">Other Products</div>
@@ -928,7 +928,7 @@ button{display:none!important}
   </div>
 
   <button class="cta-green" onclick="submitIntake()">BUILD MY PLAN NOW →</button>
-  <p style="color:var(--mt);font-size:12px;text-align:center;margin-top:8px">Takes about 15 seconds. Then your plan appears right here.</p>
+  <p style="color:var(--mt);font-size:12px;text-align:center;margin-top:8px">Takes up to 60 seconds. Then your plan appears right here.</p>
 
   <div id="errBox" class="err hide"></div>
 </div>
@@ -1248,7 +1248,7 @@ button{display:none!important}
   </div>
 
   <button class="cta-green" onclick="submitCheckin()">BUILD MY NEXT PLAN →</button>
-  <p style="color:var(--mt);font-size:12px;text-align:center;margin-top:8px">Takes about 15 seconds. Then your plan appears right here.</p>
+  <p style="color:var(--mt);font-size:12px;text-align:center;margin-top:8px">Takes up to 60 seconds. Then your plan appears right here.</p>
 
   <div id="d2_errBox" class="err hide"></div>
 </div>
@@ -1261,7 +1261,7 @@ button{display:none!important}
 <div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;text-align:center">
   <div class="build-icon">🎯</div>
   <div class="build-title">Your plan is <em>being built right now.</em></div>
-  <div class="build-sub">Teresa's coaching system is analyzing your schedule, your experience level, and your biggest struggle to create a minute-by-minute coaching plan just for you. This takes about 15 seconds.</div>
+  <div class="build-sub">Teresa's coaching system is analyzing your schedule, your experience level, and your biggest struggle to create a minute-by-minute coaching plan just for you. This can take up to 60 seconds.</div>
   <div class="build-steps">
     <div class="build-step active" id="bs1"><span class="ico">📋</span><span class="txt">Reading your schedule and available time...</span></div>
     <div class="build-step" id="bs2"><span class="ico">🧠</span><span class="txt">Matching coaching strategies to your experience...</span></div>
@@ -1291,7 +1291,7 @@ button{display:none!important}
   </div>
   <div id="pTasks"></div>
   <div class="evening"><p class="et">🌙 Evening Reflection</p><p id="pEvening"></p></div>
-  <div class="tomorrow"><p class="tt">🌙 Tonight's 5-Minute Ritual</p><p id="pTomorrow"></p><h3>Ready to build tomorrow? Come back, pay for your next day, and build a brand new plan.</h3><button class="cta" onclick="goHome()">Get Tomorrow's Plan →</button><p class="ts">Tomorrow morning you'll wake up to an exact schedule of exactly what to do and when.</p></div>
+  <div class="tomorrow" id="tomorrowBox"><p class="tt">🌙 Tonight's 5-Minute Ritual</p><p id="pTomorrow"></p><h3>Ready to build tomorrow? Come back, pay for your next day, and build a brand new plan.</h3><button class="cta" onclick="goHome()">Get Tomorrow's Plan →</button><p class="ts">Tomorrow morning you'll wake up to an exact schedule of exactly what to do and when.</p></div>
   <div class="ft"><p class="a">Results Reset™ Daily</p><p class="b">Created by Teresa Overcash · Top 1% producer · NCREC Instructor · Nearly 30 years of experience</p><p class="c">She doesn't just know it — she teaches it, sells it, and coaches it. The AI enhances the process. Teresa does the talking.</p></div>
 </div>
 </div>
@@ -1679,6 +1679,8 @@ function render(nm) {
     return;
   }
 
+  // Show tomorrow box for daily plans
+  document.getElementById('tomorrowBox').classList.remove('hide');
   document.getElementById('pDay').textContent = S.streak > 1 ? 'Day ' + S.streak + ' of Your Reset' : 'Day 1 — Let\'s Go';
   document.getElementById('pGreetTitle').textContent = 'Good morning' + (nm && nm !== 'Agent' ? ', ' + nm : '') + '. Your day is ready.';
   document.getElementById('pGreetText').textContent = p.greeting || '';
@@ -1698,12 +1700,13 @@ function render(nm) {
 }
 
 function renderWeekly(nm, p) {
+  // Hide the "buy tomorrow's plan" box for weekly plans
+  document.getElementById('tomorrowBox').classList.add('hide');
   document.getElementById('pDay').textContent = 'Your Week Plan';
   document.getElementById('pGreetTitle').textContent = 'Good morning' + (nm && nm !== 'Agent' ? ', ' + nm : '') + '. Your whole week is ready.';
   document.getElementById('pGreetText').textContent = p.greeting || '';
   document.getElementById('pMirror').textContent = p.mirrorMoment || '';
   document.getElementById('pEvening').textContent = p.eveningReflection || '';
-  document.getElementById('pTomorrow').textContent = '';
   if (p.identityStatement) { document.getElementById('pIdentity').textContent = p.identityStatement; document.getElementById('pIdentityWrap').classList.remove('hide'); } else { document.getElementById('pIdentityWrap').classList.add('hide'); }
   if (p.selfDoubtRebuttal) { document.getElementById('pRebuttal').textContent = p.selfDoubtRebuttal; document.getElementById('pRebuttalWrap').classList.remove('hide'); } else { document.getElementById('pRebuttalWrap').classList.add('hide'); }
 
