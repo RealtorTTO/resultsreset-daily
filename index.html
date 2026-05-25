@@ -981,7 +981,7 @@ button{display:none!important}
   </div>
   <div class="field">
     <label class="label">Your Email</label>
-    <input type="email" id="d2_email" class="inp" placeholder="your@email.com">
+    <input type="email" id="d2_email" class="inp" placeholder="your@email.com" required>
   </div>
 
   <!-- Step progress -->
@@ -1926,6 +1926,18 @@ function gatherCheckinAnswers() {
 
 // ── CHECKIN: SUBMIT ──
 function submitCheckin() {
+  // Validate required email before submission
+  var emailVal = (document.getElementById('d2_email').value || '').trim();
+  var emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailVal || !emailRe.test(emailVal)) {
+    var emEl = document.getElementById('d2_email');
+    emEl.classList.add('error');
+    emEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    var errBox = document.getElementById('d2_errBox');
+    if (errBox) { errBox.textContent = 'Please enter a valid email address so Teresa can follow up with you.'; errBox.classList.remove('hide'); }
+    return;
+  }
+  document.getElementById('d2_email').classList.remove('error');
   var a = gatherCheckinAnswers();
 
   // Submit to Netlify
