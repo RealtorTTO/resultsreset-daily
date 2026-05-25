@@ -528,10 +528,10 @@ async def health():
 # ── Gumroad License Verification ──
 # product_permalink maps to the Gumroad product short-link slug
 GUMROAD_PRODUCTS = {
-        "trial":   "resultsreset5",
-        "daily":   "resultsresetday2",
-        "monthly": "resultsresetmonthly",
-        "annual":  "resultsresetannual",
+        "trial":   "oUM1ncFj-PUd3NCyoPS8wg==",
+        "daily":   "x6TP4xJxwZspGEFID6qjh7bQknWgbM=",
+        "monthly": "XtM50P0UIPfYPj8SpYL8X541En6pI0=",
+        "annual":  "iV9GHkjxaLUl2Z2vio1BRokzJY6leU=",
 }
 # Subscription plans: do NOT increment uses counter (monthly/annual)
 # Single-use plans: increment counter by default (trial/daily)
@@ -562,8 +562,8 @@ async def verify_license(request: Request):
                 status_code=400,
             )
 
-        product_permalink = GUMROAD_PRODUCTS.get(plan)
-        if not product_permalink:
+        product_id = GUMROAD_PRODUCTS.get(plan)
+        if not product_id:
             logger.warning(f"[VERIFY] Unknown plan={plan!r} key={key_preview}")
             return JSONResponse(
                 content={"valid": False, "error": "Unknown plan"},
@@ -571,7 +571,7 @@ async def verify_license(request: Request):
             )
 
         payload = {
-            "product_permalink": product_permalink,
+            "product_id": product_id,
             "license_key": license_key,
         }
         if plan in GUMROAD_SUBSCRIPTION_PLANS:
@@ -583,13 +583,16 @@ async def verify_license(request: Request):
                 data=payload,
                 timeout=10,
             )
-            resp.raise_for_status()
             gumroad = resp.json()
+            if resp.status_code != 200:
+                gumroad_msg = gumroad.get("message", f"HTTP {resp.status_code}")
+                logger.error(f"[VERIFY] Gumroad rejected plan={plan} key={key_preview} http={resp.status_code}: {gumroad_msg}")
+                return JSONResponse(content={"valid": False, "error": "gumroad_rejected", "message": gumroad_msg})
         except requests.exceptions.Timeout:
             logger.error(f"[VERIFY] Gumroad timeout plan={plan} key={key_preview}")
             return JSONResponse(content={"valid": False, "error": "timeout", "message": PAYWALL_OFFLINE_MSG})
         except requests.exceptions.RequestException as e:
-            logger.error(f"[VERIFY] Gumroad error plan={plan} key={key_preview}: {e}")
+            logger.error(f"[VERIFY] Gumroad network error plan={plan} key={key_preview}: {e}")
             return JSONResponse(content={"valid": False, "error": "network_error", "message": PAYWALL_OFFLINE_MSG})
 
         if gumroad.get("success") is True:
