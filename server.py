@@ -12,7 +12,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import requests
 
-from anthropic import Anthropic
+from anthropic import Anthropi
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse
@@ -516,10 +516,11 @@ async def generate_plan(request: Request):
 
         plan = json.loads(clean)
         
-        if agent_name and agent_email:
-            plan_email_text = build_plan_text_for_email(plan, agent_name)
-            asyncio.create_task(send_plan_to_teresa(agent_name, agent_email, plan_email_text, is_checkin))
-            # Follow-up removed — Teresa follows up personally
+        # Always notify Teresa; only schedule follow-up if we have the agent's email
+        plan_email_text = build_plan_text_for_email(plan, agent_name)
+        logger.info(f"[EMAIL] Preparing to notify Teresa — agent={agent_name!r} email={agent_email!r} is_checkin={is_checkin}")
+        asyncio.create_task(send_plan_to_teresa(agent_name, agent_email, plan_email_text, is_checkin))
+        if agent_email:
             asyncio.create_task(schedule_followup(agent_name, agent_email))
         
         return JSONResponse(content={"content": [{"text": json.dumps(plan)}]})
