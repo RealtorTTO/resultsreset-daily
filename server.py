@@ -543,69 +543,68 @@ PAYWALL_OFFLINE_MSG = (
 
 @app.post("/api/verify-license")
 async def verify_license(request: Request):
-        try:
-                    data = await request.json()
-                    license_key = (data.get("license_key") or "").strip()
-                    plan = (data.get("plan") or "").strip().lower()
-                    owner_email = (data.get("owner_email") or "").strip().lower()
-                    key_preview = (license_key[:8] + "...") if len(license_key) > 8 else license_key
-            
-        # ── Owner bypass check ──
+    try:
+        data = await request.json()
+        license_key = (data.get("license_key") or "").strip()
+        plan = (data.get("plan") or "").strip().lower()
+        owner_email = (data.get("owner_email") or "").strip().lower()
+        key_preview = (license_key[:8] + "...") if len(license_key) > 8 else license_key
+
+        # Owner bypass check
         if owner_email and OWNER_BYPASS and owner_email in OWNER_EMAILS:
-                        logger.info(f"[VERIFY] OWNER BYPASS: {owner_email}")
-                        return JSONResponse(content={"valid": True, "plan": "owner", "bypass": True})
-            
+            logger.info(f"[VERIFY] OWNER BYPASS: {owner_email}")
+            return JSONResponse(content={"valid": True, "plan": "owner", "bypass": True})
+
         if not license_key or not plan:
-                        logger.warning(f"[VERIFY] Bad request — key={key_preview!r}, plan={plan!r}")
-                        return JSONResponse(
-                                            content={"valid": False, "error": "Missing license_key or plan"},
-                                            status_code=400,
-                        )
-            
+            logger.warning(f"[VERIFY] Bad request key={key_preview!r} plan={plan!r}")
+            return JSONResponse(
+                content={"valid": False, "error": "Missing license_key or plan"},
+                status_code=400,
+            )
+
         product_permalink = GUMROAD_PRODUCTS.get(plan)
-            if not product_permalink:
-                            logger.warning(f"[VERIFY] Unknown plan={plan!r}, key={key_preview}")
-                            return JSONResponse(
-                                                content={"valid": False, "error": "Unknown plan"},
-                                                status_code=400,
-                            )
-                
+        if not product_permalink:
+            logger.warning(f"[VERIFY] Unknown plan={plan!r} key={key_preview}")
+            return JSONResponse(
+                content={"valid": False, "error": "Unknown plan"},
+                status_code=400,
+            )
+
         payload = {
-                        "product_permalink": product_permalink,
-                        "license_key": license_key,
+            "product_permalink": product_permalink,
+            "license_key": license_key,
         }
-        # Preserve uses counter for subscriptions; increment for single-use plans
         if plan in GUMROAD_SUBSCRIPTION_PLANS:
-                        payload["increment_uses_count"] = "false"
-            
+            payload["increment_uses_count"] = "false"
+
         try:
-                        resp = requests.post(
-                                            "https://api.gumroad.com/v2/licenses/verify",
-                                            data=payload,
-                                            timeout=10,
-                        )
-                        resp.raise_for_status()
-                        gumroad = resp.json()
+            resp = requests.post(
+                "https://api.gumroad.com/v2/licenses/verify",
+                data=payload,
+                timeout=10,
+            )
+            resp.raise_for_status()
+            gumroad = resp.json()
         except requests.exceptions.Timeout:
-                        logger.error(f"[VERIFY] Gumroad timeout — plan={plan}, key={key_preview}")
-                        return JSONResponse(content={"valid": False, "error": "timeout", "message": PAYWALL_OFFLINE_MSG})
+            logger.error(f"[VERIFY] Gumroad timeout plan={plan} key={key_preview}")
+            return JSONResponse(content={"valid": False, "error": "timeout", "message": PAYWALL_OFFLINE_MSG})
         except requests.exceptions.RequestException as e:
-                        logger.error(f"[VERIFY] Gumroad network error — plan={plan}, key={key_preview}: {e}")
-                        return JSONResponse(content={"valid": False, "error": "network_error", "message": PAYWALL_OFFLINE_MSG})
-            
+            logger.error(f"[VERIFY] Gumroad error plan={plan} key={key_preview}: {e}")
+            return JSONResponse(content={"valid": False, "error": "network_error", "message": PAYWALL_OFFLINE_MSG})
+
         if gumroad.get("success") is True:
-                        logger.info(f"[VERIFY] SUCCESS — plan={plan}, key={key_preview}")
-                        return JSONResponse(content={"valid": True, "plan": plan})
+            logger.info(f"[VERIFY] SUCCESS plan={plan} key={key_preview}")
+            return JSONResponse(content={"valid": True, "plan": plan})
         else:
-                        gumroad_msg = gumroad.get("message", "Invalid license key")
-                        logger.warning(f"[VERIFY] FAILED — plan={plan}, key={key_preview}: {gumroad_msg}")
-                        return JSONResponse(content={"valid": False, "error": gumroad_msg})
-            
-except Exception as e:
+            gumroad_msg = gumroad.get("message", "Invalid license key")
+            logger.warning(f"[VERIFY] FAILED plan={plan} key={key_preview}: {gumroad_msg}")
+            return JSONResponse(content={"valid": False, "error": gumroad_msg})
+
+    except Exception as e:
         logger.error(f"[VERIFY] Unexpected error: {e}")
         return JSONResponse(
-                        content={"valid": False, "error": "server_error", "message": PAYWALL_OFFLINE_MSG},
-                        status_code=500,
+            content={"valid": False, "error": "server_error", "message": PAYWALL_OFFLINE_MSG},
+            status_code=500,
         )
 
 # Serve static directory for any extra assets
