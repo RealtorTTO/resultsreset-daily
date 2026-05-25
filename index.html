@@ -330,7 +330,11 @@ button{display:none!important}
 .s-price-unit{font-size:12px;color:var(--mt)}
 .s-pop-tag{position:absolute;top:-10px;left:20px;background:var(--gd);color:var(--bk);font-size:10px;font-weight:700;letter-spacing:1.5px;padding:2px 10px;text-transform:uppercase}
 
-.s-cta{width:100%;padding:20px;background:linear-gradient(135deg,var(--gd),#a07d1c);color:var(--bk);font-size:17px;font-weight:700;letter-spacing:2px;text-transform:uppercase;border:none;cursor:pointer;transition:transform .2s,box-shadow .2s;margin-top:20px}
+.s-cta{width:100%;padding:20px;background:linear-gradient(135deg,var(--gd),#a07d1c);color:var(--bk);font-size:17px;font-weight:700;letter-spacing:2px;text-transform:uppercase;border:none;cursor:pointer;transition:transform .2s,box-shadow .2s;margin-top:20px;display:block;text-align:center;text-decoration:none}
+.s-cta-sm{width:100%;padding:12px 16px;background:linear-gradient(135deg,var(--gd),#a07d1c);color:var(--bk);font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border:none;cursor:pointer;transition:transform .2s;margin-top:12px;display:block;text-align:center;text-decoration:none;border-radius:4px}
+.s-already-have{text-align:center;margin-top:16px;font-size:14px;color:var(--mt)}
+.s-price-card{display:flex;align-items:flex-start;gap:12px;padding:16px;border:1px solid var(--bd);border-radius:8px;margin-bottom:12px;cursor:default}
+.s-price-card .s-price-right{margin-left:auto;text-align:right;min-width:120px}
 .s-cta:hover{transform:translateY(-1px);box-shadow:0 8px 32px rgba(196,154,42,.25)}
 
 .s-footer{text-align:center;margin-top:40px;padding:20px 0;border-top:1px solid var(--bd)}
@@ -447,39 +451,41 @@ button{display:none!important}
   <div class="s-section-title">Start for $5. Seriously.</div>
   <div class="s-pricing-sub">Every plan comes with the same depth and personalization. Pick what fits.</div>
 
-  <div class="s-price-card" data-g="pln" data-v="daily" onclick="pickPlan(this)">
-    <div class="s-price-radio"></div>
+  <div class="s-price-card" data-g="pln" data-v="daily">
     <div class="s-price-info">
       <div class="s-price-name">Daily Plan</div>
       <div class="s-price-detail">One fully personalized day plan delivered instantly. Perfect to try it out.</div>
     </div>
     <div class="s-price-right">
       <div class="s-price-amount">$5</div>
+      <a class="s-cta s-cta-sm" href="https://teresa300.gumroad.com/l/resultsreset5" target="_blank" rel="noopener">Buy on Gumroad</a>
     </div>
   </div>
-  <div class="s-price-card pop sel" data-g="pln" data-v="monthly" onclick="pickPlan(this)">
+  <div class="s-price-card pop" data-g="pln" data-v="monthly">
     <div class="s-pop-tag">Most Popular</div>
-    <div class="s-price-radio"></div>
     <div class="s-price-info">
       <div class="s-price-name">Monthly</div>
       <div class="s-price-detail">Fresh daily plan every day. Teresa personally reviews and adjusts your plans as you grow. Cancel anytime.</div>
     </div>
     <div class="s-price-right">
       <div class="s-price-amount">$29<span class="s-price-unit">/mo</span></div>
+      <a class="s-cta s-cta-sm" href="https://teresa300.gumroad.com/l/resultsresetmonthly" target="_blank" rel="noopener">Buy on Gumroad</a>
     </div>
   </div>
-  <div class="s-price-card" data-g="pln" data-v="annual" onclick="pickPlan(this)">
-    <div class="s-price-radio"></div>
+  <div class="s-price-card" data-g="pln" data-v="annual">
     <div class="s-price-info">
       <div class="s-price-name">Annual</div>
       <div class="s-price-detail">Best value — save over $100/yr. Full year of daily plans with ongoing coaching adjustments.</div>
     </div>
     <div class="s-price-right">
       <div class="s-price-amount">$249<span class="s-price-unit">/yr</span></div>
+      <a class="s-cta s-cta-sm" href="https://teresa300.gumroad.com/l/resultsresetannual" target="_blank" rel="noopener">Buy on Gumroad</a>
     </div>
   </div>
 
-  <button class="s-cta" id="salesBuyBtn" onclick="startPurchase()">GET STARTED</button>
+  <div class="s-already-have">
+    <p>Already purchased? <a onclick="showScreen('returnScreen')" style="cursor:pointer;color:var(--gd);text-decoration:underline">Enter your license key here →</a></p>
+  </div>
 </div>
 
 <!-- FOOTER -->
@@ -497,25 +503,41 @@ button{display:none!important}
 <!-- SCREEN 3: RETURNING MEMBER LOGIN (?returning=1) -->
 <!-- ════════════════════════════════════════════════ -->
 <div id="returnScreen" class="screen">
-<div class="return-box">
-  <div class="icon">👋</div>
-  <h2>Welcome back.</h2>
-  <p>Enter the email you used when you purchased, and we'll get your next plan started.</p>
-  <div class="field" style="max-width:400px;margin:0 auto 16px;text-align:left">
-    <label class="label">Your Email</label>
-    <input type="email" id="returnEmail" class="inp" placeholder="your@email.com">
-    <div class="field-error" id="errReturnEmail">Please enter a valid email.</div>
+  <div class="return-box">
+    <div class="icon">🔑</div>
+    <h2>Welcome Back</h2>
+    <p class="return-sub">Enter the license key from your Gumroad purchase email to access your coaching plan.</p>
+
+    <div class="field">
+      <div class="label">License Key</div>
+      <input type="text" id="returnLicenseKey" class="inp" placeholder="XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX" autocomplete="off" spellcheck="false">
+    </div>
+    <div class="field" style="margin-top:10px">
+      <div class="label">Plan</div>
+      <select id="returnPlanSelect" class="inp">
+        <option value="trial">Daily Plan – $5 (first-time trial)</option>
+        <option value="daily">Daily Plan – $5 (day 2+)</option>
+        <option value="monthly" selected>Monthly – $29/mo</option>
+        <option value="annual">Annual – $249/yr</option>
+      </select>
+    </div>
+    <div class="field" id="ownerEmailRow" style="margin-top:10px;display:none">
+      <div class="label">Owner Email (bypass mode)</div>
+      <input type="email" id="ownerEmailInput" class="inp" placeholder="owner email" autocomplete="email">
+    </div>
+    <div id="errReturnLicense" class="field-error hide" style="margin-top:8px"></div>
+
+    <button class="cta-green" onclick="verifyAndEnter()" style="margin-top:16px">Verify &amp; Enter →</button>
+    <div class="return-back ft" style="margin-top:12px;text-align:center">
+      <a onclick="showScreen('salesScreen')" style="cursor:pointer">First time here? View plans</a>
+      &nbsp;·&nbsp;
+      <a href="https://teresa300.gumroad.com/l/resultsresetday2" target="_blank" rel="noopener" style="color:var(--gd)">Need another day plan? $5</a>
+    </div>
+    <p style="margin-top:10px;font-size:12px;color:var(--mt);text-align:center">
+      Check your Gumroad receipt email for your license key.
+    </p>
   </div>
-  <button class="cta-green" onclick="returnLogin()" style="max-width:400px;margin:0 auto;display:block">BUILD TODAY'S PLAN →</button>
-  <p class="return-back">First time here? <a onclick="showScreen('salesScreen')">Get your first plan →</a></p>
-  <div class="ft" style="margin-top:40px"><p class="a">Results Reset™ Daily</p><p class="b">Created by Teresa Overcash · Top 1% producer · NCREC Instructor</p></div>
 </div>
-</div>
-
-
-<!-- ════════════════════════════════════════════════ -->
-<!-- SCREEN 4: INTAKE QUESTIONS (after payment)      -->
-<!-- ════════════════════════════════════════════════ -->
 <div id="intakeScreen" class="screen">
 <div class="wrap" style="padding-top:20px">
 
@@ -1373,14 +1395,15 @@ function getSlots() {
 
 // ── PURCHASE FLOW ──
 var gumroadLinks = {
-  daily: 'https://teresa300.gumroad.com/l/resultsreset5',
+  trial: 'https://teresa300.gumroad.com/l/resultsreset5',
+  daily: 'https://teresa300.gumroad.com/l/resultsresetday2',
   monthly: 'https://teresa300.gumroad.com/l/resultsresetmonthly',
-  annual: 'https://teresa300.gumroad.com/l/resultsresetannual',
-  day2: 'https://teresa300.gumroad.com/l/resultsresetday2'
+  annual: 'https://teresa300.gumroad.com/l/resultsresetannual'
 };
 
 function startPurchase() {
-  window.location.href = gumroadLinks[S.selectedPlan] || gumroadLinks.monthly;
+  // Buy buttons now go directly to Gumroad — show key entry on fallback
+  showScreen('returnScreen');
 }
 
 // ── CONFETTI ANIMATION ──
@@ -1405,19 +1428,56 @@ function showConfetti() {
 }
 
 // ── RETURNING MEMBER FLOW (?returning=1) ──
-function returnLogin() {
-  var em = document.getElementById('returnEmail');
-  var emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!em.value.trim() || !emailRe.test(em.value)) {
-    em.classList.add('error');
-    document.getElementById('errReturnEmail').classList.add('show');
-    return;
-  }
-  em.classList.remove('error');
-  document.getElementById('errReturnEmail').classList.remove('show');
+// Legacy alias
+function returnLogin() { verifyAndEnter(); }
 
-  // Navigate to Gumroad for day 2 payment - redirect will come back to ?returning=1&paid=1
-  window.location.href = 'https://teresa300.gumroad.com/l/resultsresetday2';
+async function verifyAndEnter() {
+  var keyInput = document.getElementById('returnLicenseKey');
+  var planSelect = document.getElementById('returnPlanSelect');
+  var ownerEmailInput = document.getElementById('ownerEmailInput');
+  var errEl = document.getElementById('errReturnLicense');
+
+  var licenseKey = keyInput ? keyInput.value.trim() : '';
+  var plan = planSelect ? planSelect.value : 'monthly';
+  var ownerEmail = ownerEmailInput ? ownerEmailInput.value.trim().toLowerCase() : '';
+
+  if (errEl) { errEl.textContent = ''; errEl.classList.add('hide'); }
+
+  var btn = document.querySelector('#returnScreen .cta-green');
+  if (btn) { btn.disabled = true; btn.textContent = 'Verifying…'; }
+
+  try {
+    var payload = { plan: plan, owner_email: ownerEmail };
+    if (licenseKey) payload.license_key = licenseKey;
+
+    var resp = await fetch('/api/verify-license', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    var result = await resp.json();
+
+    if (result.valid) {
+      var accessData = {
+        key: licenseKey || ('owner:' + ownerEmail),
+        plan: result.plan || plan,
+        verifiedAt: Date.now()
+      };
+      localStorage.setItem('rrd_access', JSON.stringify(accessData));
+      S.isReturning = true;
+      S.isSubscriber = ['monthly', 'annual', 'owner'].indexOf(accessData.plan) >= 0;
+      S.selectedPlan = accessData.plan === 'owner' ? 'monthly' : accessData.plan;
+      showScreen('checkinScreen');
+    } else {
+      var msg = result.message || result.error || 'Invalid license key. Please check and try again.';
+      if (errEl) { errEl.textContent = msg; errEl.classList.remove('hide'); }
+    }
+  } catch(e) {
+    var failMsg = "We can’t verify your access right now — please refresh in a few minutes, or email teresatedder@gmail.com and we’ll get you in.";
+    if (errEl) { errEl.textContent = failMsg; errEl.classList.remove('hide'); }
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'Verify & Enter →'; }
+  }
 }
 
 // ── STEP PROGRESS UPDATER ──
@@ -1904,43 +1964,81 @@ document.addEventListener('click', function(e) {
   }
 });
 
-// ── ON PAGE LOAD — check URL params ──
-(function() {
+// ── ON PAGE LOAD — check URL params + localStorage access ──
+(async function() {
   var params = new URLSearchParams(window.location.search);
-  // Accept both ?plan=sub and ?sub=1 as subscriber flags
-  var isSub = params.get('plan') === 'sub' || params.get('sub') === '1';
+  var urlKey = params.get('key') || '';
+  var urlPlan = params.get('plan') || '';
 
-  // ?member=1 → New member from Gumroad redirect — go directly to intake
-  if (params.get('member') === '1') {
-    S.isReturning = false;
-    if (isSub) {
-      S.isSubscriber = true;
-      document.getElementById('intakePlanTypeSection').classList.remove('hide');
-    }
-    document.getElementById('intakeWelcome').textContent = '🎉 You\'re in! Payment confirmed. Let\'s build your first plan.';
-    showScreen('intakeScreen');
-    showConfetti();
+  // Auto-populate license key field from ?key= param (Gumroad redirect)
+  if (urlKey) {
+    var keyInput = document.getElementById('returnLicenseKey');
+    if (keyInput) keyInput.value = urlKey;
+    var planSel = document.getElementById('returnPlanSelect');
+    var validPlans = ['trial','daily','monthly','annual'];
+    if (planSel && urlPlan && validPlans.indexOf(urlPlan) >= 0) planSel.value = urlPlan;
+  }
+
+  // ── Check localStorage for previously verified access ──
+  var stored = null;
+  try { stored = JSON.parse(localStorage.getItem('rrd_access') || 'null'); } catch(e) {}
+
+  var SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
+  var needsReVerify = stored && (Date.now() - (stored.verifiedAt || 0)) > SEVEN_DAYS;
+
+  if (stored && !needsReVerify) {
+    // Fresh stored access — let them in directly
+    S.isReturning = true;
+    S.isSubscriber = ['monthly','annual','owner'].indexOf(stored.plan) >= 0;
+    S.selectedPlan = stored.plan === 'owner' ? 'monthly' : (stored.plan || 'monthly');
+    showScreen('checkinScreen');
     return;
   }
 
-  // ?returning=1 → Returning member
-  if (params.get('returning') === '1') {
-    if (params.get('paid') === '1') {
-      // Paid via Gumroad redirect — go to Day 2+ check-in
-      S.isReturning = true;
-      if (isSub) {
-        S.isSubscriber = true;
-        document.getElementById('planTypeSection').classList.remove('hide');
+  if (stored && needsReVerify) {
+    // Stored key is >7 days old — re-verify silently
+    try {
+      var storedKey = stored.key || '';
+      var storedPlan = stored.plan || 'monthly';
+      var isOwnerKey = storedKey.indexOf('owner:') === 0;
+      var payload = isOwnerKey
+        ? { plan: storedPlan, owner_email: storedKey.replace('owner:','') }
+        : { license_key: storedKey, plan: storedPlan };
+
+      var resp = await fetch('/api/verify-license', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      var result = await resp.json();
+
+      if (result.valid) {
+        stored.verifiedAt = Date.now();
+        localStorage.setItem('rrd_access', JSON.stringify(stored));
+        S.isReturning = true;
+        S.isSubscriber = ['monthly','annual','owner'].indexOf(stored.plan) >= 0;
+        S.selectedPlan = stored.plan === 'owner' ? 'monthly' : (stored.plan || 'monthly');
+        showScreen('checkinScreen');
+        return;
+      } else {
+        localStorage.removeItem('rrd_access');
       }
-      showScreen('checkinScreen');
-      return;
+    } catch(e) {
+      // Re-verify failed (network error) — fail closed, clear stored access
+      localStorage.removeItem('rrd_access');
     }
+  }
+
+  // ── Auto-verify if ?key= and ?plan= both present (Gumroad redirect) ──
+  if (urlKey && urlPlan && ['trial','daily','monthly','annual'].indexOf(urlPlan) >= 0) {
     showScreen('returnScreen');
+    await verifyAndEnter();
     return;
   }
 
-  // Default: show sales screen (already active)
-})();
+  // ── No valid access — show pricing/sales screen ──
+  showScreen('salesScreen');
+})(););
 </script>
 </body>
 </html>
