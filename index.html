@@ -1688,7 +1688,15 @@ function buildPlan(answers, isCheckin) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
   }).then(function(r) {
-    if (!r.ok) throw new Error('Server error: ' + r.status);
+    if (!r.ok) {
+      return r.json().then(function(errData) {
+        var e = new Error('Server error: ' + r.status);
+        e.serverMessage = errData.message || errData.error || 'Unable to generate your plan right now. Please try again in a moment.';
+        throw e;
+      }).catch(function() {
+        throw new Error('Server error: ' + r.status);
+      });
+    }
     return r.json();
   }).then(function(d) {
     clearInterval(buildInterval);
@@ -1707,9 +1715,13 @@ function buildPlan(answers, isCheckin) {
     console.error('Plan generation error:', err);
     clearInterval(buildInterval);
     showScreen(isCheckin ? 'checkinScreen' : 'intakeScreen');
-    var e = document.getElementById('errBox');
-    e.textContent = 'Unable to generate your plan right now. Please try again in a moment.';
-    e.classList.remove('hide');
+    var errBoxId = isCheckin ? 'd2_errBox' : 'errBox';
+    var e = document.getElementById(errBoxId);
+    if (e) {
+      var serverMsg = (err && err.serverMessage) ? err.serverMessage : 'Unable to generate your plan right now. Please try again in a moment.';
+      e.textContent = serverMsg;
+      e.classList.remove('hide');
+    }
   });
 }
 
