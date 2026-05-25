@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Results Resetâ¢ Daily â Complete Web Server for Railway
+"""Results Reset™ Daily — Complete Web Server for Railway
 Serves the frontend + handles AI plan generation + sends emails via Gmail SMTP.
 """
 import asyncio
@@ -18,16 +18,16 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 
-# ââ Logging ââ
+# ── Logging ──
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("resultsreset")
 
-# ââ Load system prompt ââ
+# ── Load system prompt ──
 PROMPT_PATH = os.path.join(os.path.dirname(__file__), "teresa_system_prompt.txt")
 with open(PROMPT_PATH, "r") as f:
     SYSTEM_PROMPT = f.read()
 
-# ââ Config from environment variables ââ
+# ── Config from environment variables ──
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 GMAIL_ADDRESS = os.environ.get("GMAIL_ADDRESS", "teresaovercash@gmail.com")
 GMAIL_APP_PASSWORD = os.environ.get("GMAIL_APP_PASSWORD", "")
@@ -46,9 +46,9 @@ app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], all
 client = Anthropic(api_key=ANTHROPIC_API_KEY)
 
 
-# ââââââââââââââââââââââââââââââââââââââââââââ
+# ════════════════════════════════════════════
 # PLAN GENERATION
-# ââââââââââââââââââââââââââââââââââââââââââââ
+# ════════════════════════════════════════════
 
 def format_intake_message(data: dict) -> str:
     agent_info = data.get("agentInfo", {})
@@ -59,7 +59,7 @@ def format_intake_message(data: dict) -> str:
         parts = ["GENERATE A PERSONALIZED WEEKLY COACHING PLAN (6 DAYS, MONDAY-SATURDAY) FOR THIS AGENT.\n"]
     else:
         parts = ["GENERATE A PERSONALIZED DAILY COACHING PLAN FOR THIS AGENT.\n"]
-    parts.append("THIS IS A DAY 1 / FIRST-TIME PLAN â use the intake form answers below.\n")
+    parts.append("THIS IS A DAY 1 / FIRST-TIME PLAN — use the intake form answers below.\n")
     if plan_type == "weekly" and is_subscriber:
         parts.append("IMPORTANT: This agent is a SUBSCRIBER and wants a FULL WEEK plan.\n")
     parts.append("=" * 60)
@@ -100,7 +100,7 @@ def format_intake_message(data: dict) -> str:
     if plan_type == "weekly":
         parts.append("""
 {
-  "greeting": "Your personalized Momentum Message opening â 3-5 sentences in Teresa's voice",
+  "greeting": "Your personalized Momentum Message opening — 3-5 sentences in Teresa's voice",
   "mirrorMoment": "The Mirror Moment for the week",
   "weeklyOverview": "Brief overview of the week's focus and theme",
   "days": [
@@ -134,20 +134,20 @@ RULES FOR WEEKLY PLANS:
 - Include copy-paste scripts for conversations, social media, follow-ups
 - Include a mindset/identity task at the start of each day
 - Include a skill-building task relevant to what they said they need
-- Include rest/recharge blocks â you believe in sustainable effort
-- Every task must have specific details â never vague instructions
+- Include rest/recharge blocks — you believe in sustainable effort
+- Every task must have specific details — never vague instructions
 - Adapt intensity based on their confidence level, hours, and situation
 - If they said they're broke/urgent, front-load income-producing activities
 - If they're burned out, reduce the plan and give permission to do less
-- Vary the activities across days â don't repeat the same exact tasks
-- Build momentum through the week â start easier, increase intensity
+- Vary the activities across days — don't repeat the same exact tasks
+- Build momentum through the week — start easier, increase intensity
 - Time blocks should match their stated availability for EACH day
 """)
     else:
         parts.append("""
 {
-  "greeting": "Your personalized Momentum Message opening â 3-5 sentences in Teresa's voice",
-  "mirrorMoment": "The Mirror Moment â a reflective prompt based on their answers",
+  "greeting": "Your personalized Momentum Message opening — 3-5 sentences in Teresa's voice",
+  "mirrorMoment": "The Mirror Moment — a reflective prompt based on their answers",
   "eveningReflection": "Evening reflection questions for end of day",
   "tomorrowPrep": "What to prepare tonight for tomorrow",
   "identityStatement": "A personalized I AM identity statement based on their strengths",
@@ -172,8 +172,8 @@ RULES FOR THE SCHEDULE:
 - Include copy-paste scripts for conversations, social media, follow-ups
 - Include a mindset/identity task at the start of the day
 - Include a skill-building task relevant to what they said they need
-- Include rest/recharge blocks â you believe in sustainable effort
-- Every task must have specific details â never vague instructions
+- Include rest/recharge blocks — you believe in sustainable effort
+- Every task must have specific details — never vague instructions
 - Adapt intensity based on their confidence level, hours, and situation
 - If they said they're broke/urgent, front-load income-producing activities
 - If they're burned out, reduce the plan and give permission to do less
@@ -193,7 +193,7 @@ def format_checkin_message(data: dict) -> str:
         parts = ["GENERATE A PERSONALIZED WEEKLY COACHING PLAN (6 DAYS, MONDAY-SATURDAY) FOR THIS RETURNING AGENT.\n"]
     else:
         parts = ["GENERATE A PERSONALIZED DAILY COACHING PLAN FOR THIS RETURNING AGENT.\n"]
-    parts.append("THIS IS A DAY 2+ PLAN â use the check-in form answers below to adapt their plan.\n")
+    parts.append("THIS IS A DAY 2+ PLAN — use the check-in form answers below to adapt their plan.\n")
     if plan_type == "weekly" and is_subscriber:
         parts.append("IMPORTANT: This agent is a SUBSCRIBER and wants a FULL WEEK plan.\n")
     parts.append("=" * 60)
@@ -255,24 +255,24 @@ def format_checkin_message(data: dict) -> str:
 
     checkin_rules = """
 RULES FOR DAY 2+ PLANS:
-- Reference their check-in answers directly â quote their words back to them
+- Reference their check-in answers directly — quote their words back to them
 - If they said the last plan was "too much," simplify this one
 - If they said "too easy," push harder with more tasks and higher targets
 - If they're discouraged/drained, lead with compassion and reduce the load
 - If they're fired up, match their energy with an ambitious plan
 - Double down on what they said is producing traction
-- Address the activity they're avoiding â name it, give them a script for it
+- Address the activity they're avoiding — name it, give them a script for it
 - If they have a specific farm area, include a Business Intelligence section
 - Include skills they specifically asked for help with
 - Their commitment level should calibrate plan intensity (1-5: gentle, 6-8: standard, 9-10: push hard)
-- Use their "win" as fuel â reference it in the greeting
+- Use their "win" as fuel — reference it in the greeting
 - Use their "story to stop telling" in the self-doubt rebuttal"""
 
     if plan_type == "weekly":
         parts.append("""
 {
-  "greeting": "Your personalized Momentum Message â reference their check-in answers, celebrate wins, address gaps",
-  "mirrorMoment": "The Mirror Moment â use their own words from the gap/thriving questions",
+  "greeting": "Your personalized Momentum Message — reference their check-in answers, celebrate wins, address gaps",
+  "mirrorMoment": "The Mirror Moment — use their own words from the gap/thriving questions",
   "weeklyOverview": "Brief overview of the week's focus and theme",
   "days": [
     {
@@ -298,15 +298,15 @@ RULES FOR DAY 2+ PLANS:
 """ + checkin_rules + """
 - Generate plans for Monday through Saturday (6 days). Sunday is rest.
 - Each day should have 8-15 tasks depending on available hours
-- Vary the activities across days â don't repeat the same exact tasks
-- Build momentum through the week â start easier, increase intensity
+- Vary the activities across days — don't repeat the same exact tasks
+- Build momentum through the week — start easier, increase intensity
 - Use their available time slots for EACH day
 """)
     else:
         parts.append("""
 {
-  "greeting": "Your personalized Momentum Message â reference their check-in answers, celebrate wins, address gaps",
-  "mirrorMoment": "The Mirror Moment â use their own words from the gap/thriving questions",
+  "greeting": "Your personalized Momentum Message — reference their check-in answers, celebrate wins, address gaps",
+  "mirrorMoment": "The Mirror Moment — use their own words from the gap/thriving questions",
   "eveningReflection": "Evening reflection questions tailored to their day",
   "tomorrowPrep": "What to prepare tonight based on their current pipeline and goals",
   "identityStatement": "A personalized I AM statement that evolves from their check-in",
@@ -331,82 +331,82 @@ RULES FOR DAY 2+ PLANS:
 
 def _format_task_for_email(task: dict, cat_labels: dict) -> list:
     lines = []
-    cat = cat_labels.get(task.get("category", "admin"), "ð TASK")
-    lines.append(f"\nâ° {task.get('time', '')} ({task.get('duration', '')})")
+    cat = cat_labels.get(task.get("category", "admin"), "📋 TASK")
+    lines.append(f"\n⏰ {task.get('time', '')} ({task.get('duration', '')})")
     lines.append(f"   {cat}: {task.get('title', '')}")
     lines.append(f"   {task.get('details', '')}")
     if task.get("script") and task["script"] != "null":
-        lines.append(f"\n   ð SCRIPT:")
+        lines.append(f"\n   📋 SCRIPT:")
         for sline in task["script"].split("\n"):
             lines.append(f"   {sline}")
     if task.get("motivation"):
-        lines.append(f"\n   ð {task['motivation']}")
+        lines.append(f"\n   💛 {task['motivation']}")
     return lines
 
 
 def build_plan_text_for_email(plan: dict, agent_name: str) -> str:
     is_weekly = isinstance(plan.get("days"), list)
     lines = []
-    lines.append("â" * 50)
-    lines.append("RESULTS RESETâ¢ WEEKLY COACHING PLAN" if is_weekly else "RESULTS RESETâ¢ DAILY COACHING PLAN")
+    lines.append("═" * 50)
+    lines.append("RESULTS RESET™ WEEKLY COACHING PLAN" if is_weekly else "RESULTS RESET™ DAILY COACHING PLAN")
     lines.append(f"Agent: {agent_name}")
     lines.append(f"Generated: {datetime.now().strftime('%B %d, %Y at %I:%M %p')}")
-    lines.append("â" * 50)
+    lines.append("═" * 50)
     lines.append("")
 
     if plan.get("greeting"):
-        lines.extend(["ð MOMENTUM MESSAGE", "â" * 30, plan["greeting"], ""])
+        lines.extend(["💛 MOMENTUM MESSAGE", "─" * 30, plan["greeting"], ""])
     if plan.get("identityStatement"):
-        lines.extend(["ðª IDENTITY STATEMENT", "â" * 30, plan["identityStatement"], ""])
+        lines.extend(["🪞 IDENTITY STATEMENT", "─" * 30, plan["identityStatement"], ""])
     if plan.get("selfDoubtRebuttal"):
-        lines.extend(["ðª SELF-DOUBT REBUTTAL", "â" * 30, plan["selfDoubtRebuttal"], ""])
+        lines.extend(["💪 SELF-DOUBT REBUTTAL", "─" * 30, plan["selfDoubtRebuttal"], ""])
 
     cat_labels = {
-        "mindset": "â¨ MINDSET", "power_block": "â¡ POWER BLOCK",
-        "skill": "ð SKILL BUILD", "learn": "ð YOUR LESSON",
-        "admin": "ð ADMIN", "marketing": "ð± MARKETING",
-        "current_business": "ð¼ CURRENT BIZ", "rest": "â RECHARGE",
+        "mindset": "✨ MINDSET", "power_block": "⚡ POWER BLOCK",
+        "skill": "📚 SKILL BUILD", "learn": "🎓 YOUR LESSON",
+        "admin": "📋 ADMIN", "marketing": "📱 MARKETING",
+        "current_business": "💼 CURRENT BIZ", "rest": "☕ RECHARGE",
     }
 
     if is_weekly:
         if plan.get("weeklyOverview"):
-            lines.extend(["ð WEEKLY OVERVIEW", "â" * 30, plan["weeklyOverview"], ""])
+            lines.extend(["📅 WEEKLY OVERVIEW", "─" * 30, plan["weeklyOverview"], ""])
         for day in plan["days"]:
             day_label = day.get("dayLabel", "Day")
             day_theme = day.get("dayTheme", "")
             lines.append("")
-            lines.append("â" * 40)
-            lines.append(f"ð {day_label.upper()}" + (f" â {day_theme}" if day_theme else ""))
-            lines.append("â" * 40)
+            lines.append("━" * 40)
+            lines.append(f"📅 {day_label.upper()}" + (f" — {day_theme}" if day_theme else ""))
+            lines.append("━" * 40)
             for task in day.get("schedule", []):
                 lines.extend(_format_task_for_email(task, cat_labels))
             lines.append("")
     elif plan.get("schedule"):
-        lines.extend(["ð YOUR DAILY SCHEDULE", "â" * 30])
+        lines.extend(["📅 YOUR DAILY SCHEDULE", "─" * 30])
         for task in plan["schedule"]:
             lines.extend(_format_task_for_email(task, cat_labels))
         lines.append("")
 
     if plan.get("mirrorMoment"):
-        lines.extend(["ðª MIRROR MOMENT", "â" * 30, plan["mirrorMoment"], ""])
+        lines.extend(["🪞 MIRROR MOMENT", "─" * 30, plan["mirrorMoment"], ""])
     if plan.get("eveningReflection"):
-        lines.extend(["ð EVENING REFLECTION", "â" * 30, plan["eveningReflection"], ""])
+        lines.extend(["🌙 EVENING REFLECTION", "─" * 30, plan["eveningReflection"], ""])
     if plan.get("tomorrowPrep"):
-        lines.extend(["ð TOMORROW PREP", "â" * 30, plan["tomorrowPrep"], ""])
+        lines.extend(["📝 TOMORROW PREP", "─" * 30, plan["tomorrowPrep"], ""])
 
-    lines.extend(["â" * 50, "Results Resetâ¢ Daily â resultsresetcoaching.com",
-                   "Created by Teresa Overcash Â· Top 1% Producer Â· NCREC Instructor"])
+    lines.extend(["═" * 50, "Results Reset™ Daily — resultsresetcoaching.com",
+                   "Created by Teresa Overcash · Top 1% Producer · NCREC Instructor"])
     return "\n".join(lines)
 
 
-# ââââââââââââââââââââââââââââââââââââââââââââ
+# ════════════════════════════════════════════
 # EMAIL (Gmail SMTP)
-# ââââââââââââââââââââââââââââââââââââââââââââ
+# ════════════════════════════════════════════
 
 def send_email_smtp(to_address: str, subject: str, body: str):
     """Send an email via Gmail SMTP."""
     if not GMAIL_APP_PASSWORD:
-        logger.warning("[EMAIL] No GMAIL_APP_PASSWORD set â skipping email send")
+        logger.warning("[EMAIL] No GMAIL_APP_PASSWORD set — skipping email send")
         return
     
     msg = MIMEMultipart()
@@ -426,11 +426,11 @@ def send_email_smtp(to_address: str, subject: str, body: str):
 
 async def send_plan_to_teresa(agent_name: str, agent_email: str, plan_text: str, is_checkin: bool):
     plan_type = "Check-In" if is_checkin else "New Agent"
-    subject = f"[Results Reset] {plan_type} Plan Generated â {agent_name} ({agent_email})"
+    subject = f"[Results Reset] {plan_type} Plan Generated — {agent_name} ({agent_email})"
     body = f"A new coaching plan was just generated.\n\n"
     body += f"Agent: {agent_name}\nEmail: {agent_email}\nType: {plan_type}\n"
     body += f"Time: {datetime.now().strftime('%B %d, %Y at %I:%M %p')}\n\n"
-    body += "â" * 50 + "\n\n" + plan_text
+    body += "─" * 50 + "\n\n" + plan_text
     
     await asyncio.to_thread(send_email_smtp, TERESA_EMAIL, subject, body)
 
@@ -446,9 +446,9 @@ async def schedule_followup(agent_name: str, agent_email: str):
         body += "Or if you want to lock in unlimited daily plans:\n"
         body += "Monthly plan: https://teresa300.gumroad.com/l/resultsresetmonthly\n"
         body += "Annual plan: https://teresa300.gumroad.com/l/resultsresetannual\n\n"
-        body += "Reply to this email anytime â I read every single one.\n\n"
+        body += "Reply to this email anytime — I read every single one.\n\n"
         body += "I'm in your corner. Always.\n\n"
-        body += "â Teresa\n\nTeresa Overcash\nTop 1% Producer | NCREC Licensed Instructor\n"
+        body += "— Teresa\n\nTeresa Overcash\nTop 1% Producer | NCREC Licensed Instructor\n"
         body += "Realty ONE Group Results | Winston-Salem, NC\nQuestions? teresaovercash@gmail.com"
         
         await asyncio.to_thread(send_email_smtp, agent_email, subject, body)
@@ -459,9 +459,9 @@ async def schedule_followup(agent_name: str, agent_email: str):
         logger.error(f"[FOLLOWUP ERROR] {agent_name}: {e}")
 
 
-# ââââââââââââââââââââââââââââââââââââââââââââ
+# ════════════════════════════════════════════
 # API ENDPOINTS
-# ââââââââââââââââââââââââââââââââââââââââââââ
+# ════════════════════════════════════════════
 
 @app.post("/api/generate")
 async def generate_plan(request: Request):
@@ -519,7 +519,7 @@ async def generate_plan(request: Request):
         if agent_name and agent_email:
             plan_email_text = build_plan_text_for_email(plan, agent_name)
             asyncio.create_task(send_plan_to_teresa(agent_name, agent_email, plan_email_text, is_checkin))
-            # Follow-up removed â Teresa follows up personally
+            # Follow-up removed — Teresa follows up personally
             asyncio.create_task(schedule_followup(agent_name, agent_email))
         
         return JSONResponse(content={"content": [{"text": json.dumps(plan)}]})
@@ -536,11 +536,11 @@ async def health():
     return {"status": "ok", "model": MODEL}
 
 
-# ââââââââââââââââââââââââââââââââââââââââââââ
+# ════════════════════════════════════════════
 # SERVE FRONTEND (static files)
-# ââââââââââââââââââââââââââââââââââââââââââââ
+# ════════════════════════════════════════════
 
-# ââ Gumroad License Verification ââ
+# ── Gumroad License Verification ──
 # product_permalink maps to the Gumroad product short-link slug
 GUMROAD_PRODUCTS = {
         "trial":   "oUM1ncFj-PUd3NCyoPS8wg==",
@@ -552,7 +552,7 @@ GUMROAD_PRODUCTS = {
 # Single-use plans: increment counter by default (trial/daily)
 GUMROAD_SUBSCRIPTION_PLANS = {"monthly", "annual"}
 PAYWALL_OFFLINE_MSG = (
-        "We can't verify your access right now â please refresh in a few minutes, "
+        "We can't verify your access right now — please refresh in a few minutes, "
         "or email teresatedder@gmail.com and we'll get you in."
 )
 
